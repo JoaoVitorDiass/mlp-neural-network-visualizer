@@ -1,41 +1,48 @@
+using Mlp.Api.Hubs;
+using Mlp.Api.Services;
+using Mlp.Application.Interfaces;
+using Mlp.Application.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+// 1. Configuração dos Controllers e SignalR
+builder.Services.AddControllers();
+builder.Services.AddSignalR();
 builder.Services.AddOpenApi();
+
+// 2. Injeção de Dependências (Clean Architecture)
+builder.Services.AddScoped<IMlpService, MlpService>();
+builder.Services.AddSingleton<ITrainingNotifier, SignalRTrainingNotifier>();
+
+// 3. Configuração de CORS (Essencial para o Next.js e SignalR com WebSockets)
+const string frontendCorsPolicy = "FrontendPolicy";
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(frontendCorsPolicy, policy =>
+    {
+        policy.WithOrigins(
+                "http://localhost:3000",
+                "http://127.0.0.1:3000"
+              )
+              .AllowAnyHeader()
+              .AllowAnyMethod()
+              .AllowCredentials(); // Obrigatório para comunicação SignalR via WebSocket com credenciais
+    });
+});
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// 4. Pipeline de Middlewares
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 }
 
-app.UseHttpsRedirection();
+app.UseCors(frontendCorsPolicy);
 
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
+app.MapControllers();
 
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast");
+// 5. Mapeamento do Hub SignalR
+app.MapHub<TrainingHub>("/hubs/training");
 
 app.Run();
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
