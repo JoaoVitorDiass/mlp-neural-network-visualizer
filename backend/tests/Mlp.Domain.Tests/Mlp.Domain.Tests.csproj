@@ -20,6 +20,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Mlp.Domain\Mlp.Domain.csproj" />
+    <ProjectReference Include="..\..\src\Mlp.Application\Mlp.Application.csproj" />
   </ItemGroup>
 
 </Project>
