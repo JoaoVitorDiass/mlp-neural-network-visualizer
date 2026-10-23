@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Mlp.Api/Mlp.Api.csproj" />
+    <Project Path="src/Mlp.Application/Mlp.Application.csproj" />
+    <Project Path="src/Mlp.Domain/Mlp.Domain.csproj" />
+    <Project Path="src/Mlp.Infrastructure/Mlp.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Mlp.Domain.Tests/Mlp.Domain.Tests.csproj" />
+  </Folder>
+</Solution>
