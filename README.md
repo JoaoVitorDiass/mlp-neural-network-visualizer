@@ -8,10 +8,22 @@
   <img src="https://img.shields.io/badge/HeroUI-v2.8-000000?logo=nextui&logoColor=white" alt="HeroUI" />
   <img src="https://img.shields.io/badge/Tailwind_CSS-3.4-38B2AC?logo=tailwind-css&logoColor=white" alt="Tailwind CSS" />
   <img src="https://img.shields.io/badge/SignalR-WebSockets-512BD4?logo=signalr&logoColor=white" alt="SignalR" />
-  <img src="https://img.shields.io/badge/Tests-14%20xUnit%20%7C%20120%2B%20E2E-success" alt="Tests" />
+  <img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License MIT" />
 </p>
 
 > **Aplicação Fullstack moderna para treinamento, visualização e avaliação interativa de Redes Neurais Perceptron Multicamadas (Multi-Layer Perceptron), com algoritmo implementado do zero em C# (.NET Clean Architecture) e streaming em tempo real via WebSockets (SignalR) para frontend reativo em React/Vite com HeroUI e Motion.**
+
+---
+
+## 📑 Documentações Detalhadas do Projeto
+
+Para explorar os detalhes arquiteturais, matemáticos e de código de cada camada, acesse os guias dedicados:
+
+| Módulo | Documentação | Destaques Técnicos |
+| :--- | :--- | :--- |
+| **Backend** | ⚙️ [Documentação do Backend (.NET)](backend/README.md) | Clean Architecture estrita, álgebra matricial pura, Strategy Pattern nas funções de ativação, SignalR Hub e 14 testes xUnit. |
+| **Frontend** | 🎨 [Documentação do Frontend (Vite/React)](frontend/README.md) | Vite 6, HeroUI v2.8, Motion (`motion.dev`), streaming a 60 FPS com Canvas/Chart.js, Dark Mode e Heatmap da Matriz de Confusão. |
+| **Licença** | 📄 [Licença de Uso (MIT)](LICENSE) | Termos de uso, distribuição e modificação livre. |
 
 ---
 
@@ -150,6 +162,7 @@ dotnet run --project src/Mlp.Api
 ```
 
 > A API iniciará escutando em `http://localhost:5134` (com o hub SignalR em `http://localhost:5134/hubs/training`).
+> Para documentação técnica do backend, veja [backend/README.md](backend/README.md).
 
 ---
 
@@ -164,6 +177,7 @@ npm run dev
 ```
 
 > Acesse a aplicação no seu navegador em: **`http://localhost:3000`**
+> Para detalhes dos componentes e serviços do frontend, veja [frontend/README.md](frontend/README.md).
 
 ---
 
@@ -191,6 +205,9 @@ npm run build
 
 ```text
 mlp-neural-network-visualizer/
+├── LICENSE                         # Licença oficial MIT
+├── README.md                       # Documentação principal e orquestração do monorepo
+│
 ├── backend/                        # [C# / .NET 10] Clean Architecture
 │   ├── src/
 │   │   ├── Mlp.Domain/             # Núcleo matemático puro (Rede Neural, Ativações)
@@ -199,22 +216,21 @@ mlp-neural-network-visualizer/
 │   │   └── Mlp.Api/                # ASP.NET Core Web API, Controllers e SignalR Hub
 │   ├── tests/
 │   │   └── Mlp.Domain.Tests/       # Testes unitários com xUnit
-│   └── README.md                   # Documentação detalhada do backend
+│   └── README.md                   # ⚙️ Documentação técnica detalhada do backend
 │
-├── frontend/                       # [Vite + React 18 + TS + HeroUI + Motion]
-│   ├── src/
-│   │   ├── components/             # Componentes modulares (dataset, parameters, training, evaluation)
-│   │   ├── data/presets/           # Datasets embutidos (Iris e ColorBalls)
-│   │   ├── hooks/                  # Hooks (useTrainingSession, useDataset, useTheme)
-│   │   ├── services/               # Clientes SignalR e REST API
-│   │   └── utils/                  # Normalização Min-Max, One-Hot e parsers
-│   └── package.json
-│
-└── README.md                       # Documentação principal da solução
+└── frontend/                       # [Vite + React 18 + TS + HeroUI + Motion]
+    ├── src/
+    │   ├── components/             # Componentes modulares (dataset, parameters, training, evaluation)
+    │   ├── data/presets/           # Datasets embutidos (Iris e ColorBalls)
+    │   ├── hooks/                  # Hooks reativos (useTrainingSession, useDataset, useTheme)
+    │   ├── services/               # Clientes SignalR e REST API
+    │   └── utils/                  # Normalização Min-Max, One-Hot e parsers
+    ├── package.json
+    └── README.md                   # 🎨 Documentação técnica detalhada do frontend
 ```
 
 ---
 
 ## 📄 Licença
 
-Distribuído sob a licença **MIT**. Consulte o arquivo `LICENSE` para obter mais detalhes.
+Distribuído sob a licença **MIT**. Consulte o arquivo [LICENSE](LICENSE) para obter o texto completo da licença e termos de uso.
