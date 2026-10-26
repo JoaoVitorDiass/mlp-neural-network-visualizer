@@ -66,4 +66,55 @@ public class MlpServiceTests
         Assert.True(notifier.Notifications.Count > 0, "O notificador deve receber progresso de épocas.");
         Assert.All(notifier.Notifications, n => Assert.Equal("test-session-123", n.SessionId));
     }
+
+    [Fact]
+    public async Task RunPerceptronAsync_WithSeparateTestData_ShouldTrainOnTrainDataAndEvaluateOnTestData()
+    {
+        // Arrange
+        var notifier = new TestNotifier();
+        var service = new MlpService(notifier);
+
+        var parameters = new MlpParametersDto(
+            InputLayer: 2,
+            HiddenLayer: 4,
+            OutputLayer: 2,
+            FirstClassColumn: 2,
+            LearningRate: 0.3,
+            ErrorValue: 0.01,
+            Epochs: 200,
+            TransferFunction: "Logistica",
+            TrainingRate: 1.0,
+            SameFileForTesting: false
+        );
+
+        var trainData = new List<Dictionary<string, double>>
+        {
+            new() { ["x1"] = 0.1, ["x2"] = 0.1, ["y1"] = 1.0, ["y2"] = 0.0 },
+            new() { ["x1"] = 0.2, ["x2"] = 0.1, ["y1"] = 1.0, ["y2"] = 0.0 },
+            new() { ["x1"] = 0.8, ["x2"] = 0.9, ["y1"] = 0.0, ["y2"] = 1.0 },
+            new() { ["x1"] = 0.9, ["x2"] = 0.8, ["y1"] = 0.0, ["y2"] = 1.0 }
+        };
+
+        var testData = new List<Dictionary<string, double>>
+        {
+            new() { ["x1"] = 0.15, ["x2"] = 0.15, ["y1"] = 1.0, ["y2"] = 0.0 },
+            new() { ["x1"] = 0.85, ["x2"] = 0.85, ["y1"] = 0.0, ["y2"] = 1.0 }
+        };
+
+        var request = new RunPerceptronRequest(
+            Parameters: parameters,
+            Data: trainData,
+            DataToTest: testData,
+            SessionId: "separate-test-session"
+        );
+
+        // Act
+        var response = await service.RunPerceptronAsync(request);
+
+        // Assert
+        Assert.Equal("OK", response.Message);
+        Assert.NotNull(response.Data);
+        Assert.Equal(2, response.Data.ConfusionMatrix.Length);
+        Assert.InRange(response.Data.AccuracyPercentage, 50.0, 100.0);
+    }
 }

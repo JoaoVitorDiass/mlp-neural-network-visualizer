@@ -236,6 +236,10 @@ export const App: React.FC = () => {
                   <DatasetStudio
                     dataset={dataset}
                     trainingRate={parameters.trainingRate}
+                    sameFileForTesting={parameters.sameFileForTesting}
+                    onSameFileForTestingChange={(useSame) => {
+                      handleParametersChange({ sameFileForTesting: useSame });
+                    }}
                   />
 
                   <div className="flex justify-end pt-2">
@@ -278,6 +282,13 @@ export const App: React.FC = () => {
                     parameters={parameters}
                     onChange={handleParametersChange}
                     totalSamples={dataset.rawRows.length}
+                    isSeparateTestFile={dataset.isSeparateTestFile}
+                    testSampleCount={dataset.testRawRows.length}
+                    testFileName={dataset.testFileName}
+                    onSeparateTestFileToggle={(separate) => {
+                      dataset.setIsSeparateTestFile(separate);
+                      handleParametersChange({ sameFileForTesting: !separate });
+                    }}
                   />
 
                   <div className="flex items-center justify-between pt-4">
@@ -316,13 +327,19 @@ export const App: React.FC = () => {
                         : dataset.fileName || "CSV Personalizado"
                     }
                     datasetRowCount={dataset.rawRows.length}
+                    testDatasetName={dataset.testFileName || undefined}
+                    testRowCount={dataset.isSeparateTestFile ? dataset.testRawRows.length : undefined}
                     canStart={Boolean(
                       dataset.processedDataset &&
                         dataset.processedDataset.normalizedRows.length > 0
                     )}
                     onStart={() => {
                       if (dataset.processedDataset) {
-                        trainingSession.startTraining(parameters, dataset.processedDataset);
+                        trainingSession.startTraining(
+                          parameters,
+                          dataset.processedDataset,
+                          dataset.testProcessedDataset
+                        );
                       }
                     }}
                     onStop={trainingSession.stopTraining}
@@ -344,7 +361,11 @@ export const App: React.FC = () => {
                           color="danger"
                           onClick={() => {
                             if (dataset.processedDataset) {
-                              trainingSession.startTraining(parameters, dataset.processedDataset);
+                              trainingSession.startTraining(
+                                parameters,
+                                dataset.processedDataset,
+                                dataset.testProcessedDataset
+                              );
                             }
                           }}
                         >

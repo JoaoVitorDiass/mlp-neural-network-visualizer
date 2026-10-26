@@ -107,4 +107,51 @@ public class NeuralNetworkTests
         Assert.Equal(2, eval.ConfusionMatrix[0].Length);
         Assert.InRange(eval.AccuracyPercentage, 0.0, 100.0);
     }
+
+    [Fact]
+    public void Train_XorProblem_ShouldConverge()
+    {
+        // Arrange: XOR (Problema não-linear clássico que exige neurônios de bias e camada oculta)
+        double[][] inputs =
+        [
+            [0.0, 0.0],
+            [0.0, 1.0],
+            [1.0, 0.0],
+            [1.0, 1.0]
+        ];
+
+        double[][] targets =
+        [
+            [0.0],
+            [1.0],
+            [1.0],
+            [0.0]
+        ];
+
+        var network = new NeuralNetwork(
+            inputSize: 2,
+            hiddenSize: 4,
+            outputSize: 1,
+            learningRate: 0.5,
+            activation: new SigmoidActivation(),
+            random: new Random(42)
+        );
+
+        // Act
+        var result = network.Train(
+            inputs,
+            targets,
+            maxEpochs: 2000,
+            targetMinError: 0.01
+        );
+
+        // Assert
+        Assert.True(result.FinalAverageError < 0.05, $"O erro final {result.FinalAverageError} deve ser menor que 0.05.");
+        for (int i = 0; i < inputs.Length; i++)
+        {
+            double output = network.Forward(inputs[i])[0];
+            double expected = targets[i][0];
+            Assert.True(Math.Abs(output - expected) < 0.3, $"Amostra {i}: output {output} diverge de {expected}.");
+        }
+    }
 }

@@ -242,3 +242,71 @@ export function processDataset(
     targetClasses,
   };
 }
+
+/**
+ * Normaliza os dados de teste utilizando os limites Min-Max e mapeamento de classes do dataset de treino.
+ */
+export function processTestDataset(
+  rawTestRows: Record<string, any>[],
+  trainDataset: ProcessedDataset
+): ProcessedDataset {
+  const inputCols = trainDataset.columns.filter((c) => c.role === "input");
+  const targetCol = trainDataset.columns.find((c) => c.role === "target");
+
+  const inputKeys = inputCols.map((c) => c.name);
+  const inputKeySet = new Set(inputKeys);
+  const bounds = computeMinMaxBounds(trainDataset.rawRows, inputKeys);
+  const targetClasses = trainDataset.targetClasses;
+
+  const isIntegerIndex = (s: string) => /^(?:0|[1-9]\d*)$/.test(s) && Number(s) < 4294967295;
+  const hasIntegerClass = targetClasses.some(isIntegerIndex);
+  const hasCollision = targetClasses.some((c) => inputKeySet.has(c));
+  const needsPrefix = hasIntegerClass || hasCollision;
+
+  let prefix = "";
+  if (needsPrefix) {
+    const candidates = ["class", "target", "label", "output"];
+    for (const cand of candidates) {
+      if (!targetClasses.some((cls) => inputKeySet.has(`${cand}_${cls}`))) {
+        prefix = cand;
+        break;
+      }
+    }
+    if (!prefix) prefix = "class";
+  }
+
+  const normalizedRows: Record<string, number>[] = rawTestRows.map((row) => {
+    const normRow: Record<string, number> = {};
+
+    // 1. Entradas normalizadas com os limites do conjunto de treino
+    for (const col of inputCols) {
+      const raw = row[col.name];
+      if (raw === null || raw === undefined || (typeof raw === "string" && raw.trim() === "")) {
+        normRow[col.name] = 0.0;
+        continue;
+      }
+      const rawVal = typeof raw === "number" ? raw : Number(raw);
+      const b = bounds[col.name];
+      normRow[col.name] = b ? normalizeMinMax(rawVal, b.min, b.max) : 0.0;
+    }
+
+    // 2. Classes codificadas no mesmo padrão e ordem do treino
+    if (targetCol && targetClasses.length > 0) {
+      const rawTarget = String(row[targetCol.name] ?? "").trim();
+      const encoded = encodeOneHot(rawTarget, targetClasses, prefix);
+      Object.assign(normRow, encoded);
+    }
+
+    return normRow;
+  });
+
+  return {
+    rawRows: rawTestRows,
+    normalizedRows,
+    columns: trainDataset.columns,
+    inputCount: trainDataset.inputCount,
+    outputCount: trainDataset.outputCount,
+    firstClassIndex: trainDataset.firstClassIndex,
+    targetClasses: trainDataset.targetClasses,
+  };
+}

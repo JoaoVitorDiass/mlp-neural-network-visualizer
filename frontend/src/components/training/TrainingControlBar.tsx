@@ -40,6 +40,8 @@ export interface TrainingControlBarProps {
   parameters: MlpParameters;
   datasetName?: string;
   datasetRowCount?: number;
+  testDatasetName?: string;
+  testRowCount?: number;
   canStart: boolean;
   onStart: () => void;
   onStop: () => void;
@@ -53,6 +55,8 @@ export const TrainingControlBar: React.FC<TrainingControlBarProps> = ({
   parameters,
   datasetName = "Dataset",
   datasetRowCount = 0,
+  testDatasetName,
+  testRowCount,
   canStart,
   onStart,
   onStop,
@@ -176,8 +180,20 @@ export const TrainingControlBar: React.FC<TrainingControlBarProps> = ({
             startContent={<Database className="h-3.5 w-3.5 ml-1 text-primary" />}
             className="font-medium text-xs"
           >
-            {datasetName} ({datasetRowCount} amostras)
+            Treino: {datasetName} ({datasetRowCount} amostras)
           </Chip>
+
+          {typeof testRowCount === "number" && testRowCount > 0 && (
+            <Chip
+              size="sm"
+              variant="flat"
+              color="secondary"
+              startContent={<Database className="h-3.5 w-3.5 ml-1 text-secondary" />}
+              className="font-medium text-xs"
+            >
+              Teste: {testDatasetName || "Teste"} ({testRowCount} amostras)
+            </Chip>
+          )}
 
           {/* Topology Badge */}
           <Chip

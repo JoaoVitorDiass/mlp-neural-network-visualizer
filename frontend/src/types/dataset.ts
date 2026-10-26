@@ -29,5 +29,7 @@ export interface DatasetPreset {
   featureCount: number;
   classCount: number;
   csvContent: string;
+  testCsvContent?: string;
+  testSampleCount?: number;
   defaultParameters: Partial<MlpParameters>;
 }

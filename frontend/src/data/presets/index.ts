@@ -1,11 +1,17 @@
 import { DatasetPreset } from "../../types/dataset";
+import { baseBenchmarkPreset } from "./baseBenchmark";
 import { irisPreset } from "./iris";
 import { colorBallsPreset } from "./colorBalls";
 
+export * from "./baseBenchmark";
 export * from "./iris";
 export * from "./colorBalls";
 
-export const PRESETS: DatasetPreset[] = [irisPreset, colorBallsPreset];
+export const PRESETS: DatasetPreset[] = [
+  baseBenchmarkPreset,
+  irisPreset,
+  colorBallsPreset,
+];
 
 export function getPresetById(idOrName: string): DatasetPreset | undefined {
   if (!idOrName) return undefined;

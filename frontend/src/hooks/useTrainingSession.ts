@@ -54,7 +54,11 @@ export interface UseTrainingSessionReturn {
   metrics: TrainingMetrics;
   trainingResult: RunPerceptronDataResponse | null;
   error: string | null;
-  startTraining: (parameters: MlpParameters, dataset: ProcessedDataset) => Promise<void>;
+  startTraining: (
+    parameters: MlpParameters,
+    dataset: ProcessedDataset,
+    testDataset?: ProcessedDataset | null
+  ) => Promise<void>;
   stopTraining: () => void;
   resetTraining: () => void;
 }
@@ -149,7 +153,11 @@ export const useTrainingSession = (): UseTrainingSessionReturn => {
 
   // Action: Start Training
   const startTraining = useCallback(
-    async (parameters: MlpParameters, dataset: ProcessedDataset) => {
+    async (
+      parameters: MlpParameters,
+      dataset: ProcessedDataset,
+      testDataset?: ProcessedDataset | null
+    ) => {
       if (status === "training" || status === "connecting") return;
 
       // Validation 1: Dataset presence and non-empty rows
@@ -249,7 +257,10 @@ export const useTrainingSession = (): UseTrainingSessionReturn => {
         }, 100);
 
         // 6. Build typed payload and dispatch REST POST
-        const payload = buildRunPerceptronPayload(parameters, dataset, newSessionId);
+        const testRows = (!parameters.sameFileForTesting && testDataset?.normalizedRows?.length)
+          ? testDataset.normalizedRows
+          : null;
+        const payload = buildRunPerceptronPayload(parameters, dataset, newSessionId, testRows);
         abortControllerRef.current = new AbortController();
 
         const response = await runPerceptron(payload, {

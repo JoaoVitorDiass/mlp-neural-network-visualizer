@@ -98,8 +98,12 @@ public class MlpService : IMlpService
             int trainCount = (int)Math.Floor(data.Count * rate);
             if (trainCount == 0) trainCount = data.Count;
 
-            trainData = data.Take(trainCount).ToList();
-            testData = data.Skip(trainCount).ToList();
+            // Embaralhamento reprodutível para evitar corte sequencial de classes
+            var rng = new Random(42);
+            var shuffled = data.OrderBy(_ => rng.Next()).ToList();
+
+            trainData = shuffled.Take(trainCount).ToList();
+            testData = shuffled.Skip(trainCount).ToList();
 
             // Se a taxa for 1.0 (ou não sobrar dados para teste), testa com o conjunto de treino
             if (testData.Count == 0)

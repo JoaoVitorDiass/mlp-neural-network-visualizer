@@ -4,7 +4,8 @@ using Mlp.Domain.Models;
 namespace Mlp.Domain.Entities;
 
 /// <summary>
-/// Implementação de uma Rede Neural Perceptron Multicamadas (Multi-Layer Perceptron).
+/// Implementação robusta de uma Rede Neural Perceptron Multicamadas (Multi-Layer Perceptron)
+/// com retropropagação (backpropagation), neurônios de bias e cálculo correto de erro quadrático (SSE/MSE).
 /// </summary>
 public class NeuralNetwork
 {
@@ -21,7 +22,11 @@ public class NeuralNetwork
     // [j, k]: peso do neurônio oculto j para o neurônio de saída k
     public double[,] WeightsHiddenToOutput { get; }
 
-    // Estados dos neurônios
+    // Pesos de Bias
+    public double[] BiasHidden { get; }
+    public double[] BiasOutput { get; }
+
+    // Estados internos dos neurônios
     private readonly double[] _hiddenNet;
     private readonly double[] _hiddenOutput;
     private readonly double[] _hiddenError;
@@ -29,6 +34,8 @@ public class NeuralNetwork
     private readonly double[] _outputNet;
     private readonly double[] _outputOutput;
     private readonly double[] _outputError;
+
+    private readonly Random _rng;
 
     public NeuralNetwork(
         int inputSize,
@@ -48,9 +55,13 @@ public class NeuralNetwork
         OutputSize = outputSize;
         LearningRate = learningRate;
         Activation = activation ?? throw new ArgumentNullException(nameof(activation));
+        _rng = random ?? Random.Shared;
 
         WeightsInputToHidden = new double[inputSize, hiddenSize];
         WeightsHiddenToOutput = new double[hiddenSize, outputSize];
+
+        BiasHidden = new double[hiddenSize];
+        BiasOutput = new double[outputSize];
 
         _hiddenNet = new double[hiddenSize];
         _hiddenOutput = new double[hiddenSize];
@@ -60,7 +71,7 @@ public class NeuralNetwork
         _outputOutput = new double[outputSize];
         _outputError = new double[outputSize];
 
-        InitializeWeights(random ?? Random.Shared);
+        InitializeWeights(_rng);
     }
 
     private void InitializeWeights(Random rng)
@@ -74,8 +85,16 @@ public class NeuralNetwork
             {
                 WeightsInputToHidden[i, j] = isHyperbolic
                     ? (rng.NextDouble() * 2.0 - 1.0)
-                    : rng.NextDouble();
+                    : (rng.NextDouble() * 2.0 - 1.0) * (2.0 / Math.Sqrt(InputSize));
             }
+        }
+
+        // Bias camada oculta
+        for (int j = 0; j < HiddenSize; j++)
+        {
+            BiasHidden[j] = isHyperbolic
+                ? (rng.NextDouble() * 2.0 - 1.0) * 0.1
+                : (rng.NextDouble() * 0.2 - 0.1);
         }
 
         // Pesos oculta -> saída
@@ -85,8 +104,16 @@ public class NeuralNetwork
             {
                 WeightsHiddenToOutput[j, k] = isHyperbolic
                     ? (rng.NextDouble() * 2.0 - 1.0)
-                    : rng.NextDouble();
+                    : (rng.NextDouble() * 2.0 - 1.0) * (2.0 / Math.Sqrt(HiddenSize));
             }
+        }
+
+        // Bias camada de saída
+        for (int k = 0; k < OutputSize; k++)
+        {
+            BiasOutput[k] = isHyperbolic
+                ? (rng.NextDouble() * 2.0 - 1.0) * 0.1
+                : (rng.NextDouble() * 0.2 - 0.1);
         }
     }
 
@@ -101,7 +128,7 @@ public class NeuralNetwork
         // 1. Camada Oculta
         for (int j = 0; j < HiddenSize; j++)
         {
-            double sum = 0.0;
+            double sum = BiasHidden[j];
             for (int i = 0; i < InputSize; i++)
             {
                 sum += inputs[i] * WeightsInputToHidden[i, j];
@@ -114,7 +141,7 @@ public class NeuralNetwork
         double[] outputResult = new double[OutputSize];
         for (int k = 0; k < OutputSize; k++)
         {
-            double sum = 0.0;
+            double sum = BiasOutput[k];
             for (int j = 0; j < HiddenSize; j++)
             {
                 sum += _hiddenOutput[j] * WeightsHiddenToOutput[j, k];
@@ -129,7 +156,7 @@ public class NeuralNetwork
 
     /// <summary>
     /// Executa o passo de retropropagação (Backpropagation) para uma única amostra de treino.
-    /// Retorna o erro quadrático calculado para essa amostra.
+    /// Retorna o erro quadrático (SSE) = 0.5 * sum((target - output)^2) para essa amostra.
     /// </summary>
     public double TrainSample(double[] inputs, double[] targets)
     {
@@ -139,15 +166,14 @@ public class NeuralNetwork
         // 1. Forward pass
         Forward(inputs);
 
-        // 2. Erro dos neurônios de saída: (Target - Output) * f'(Output)
+        // 2. Erro dos neurônios de saída: delta_k = (target_k - output_k) * f'(output_k)
         for (int k = 0; k < OutputSize; k++)
         {
-            double target = targets[k];
-            double output = _outputOutput[k];
-            _outputError[k] = (target - output) * Activation.Derivative(output);
+            double diff = targets[k] - _outputOutput[k];
+            _outputError[k] = diff * Activation.Derivative(_outputOutput[k]);
         }
 
-        // 3. Erro dos neurônios ocultos: (Sum_k(error_k * W_jk)) * f'(Output_j)
+        // 3. Erro dos neurônios ocultos: delta_j = (sum_k delta_k * W_jk) * f'(output_j)
         for (int j = 0; j < HiddenSize; j++)
         {
             double sum = 0.0;
@@ -158,27 +184,36 @@ public class NeuralNetwork
             _hiddenError[j] = sum * Activation.Derivative(_hiddenOutput[j]);
         }
 
-        // 4. Métrica de erro da amostra: 0.5 * (Sum_k error_k)^2 (fiel ao algoritmo original)
-        double totalOutputError = 0.0;
+        // 4. Métrica de erro da amostra (Sum of Squared Errors - SSE):
+        // E = 0.5 * sum_k (target_k - output_k)^2
+        // Garante que erros positivos e negativos nunca se anulem indevidamente.
+        double sumSquaredError = 0.0;
         for (int k = 0; k < OutputSize; k++)
         {
-            totalOutputError += _outputError[k];
+            double diff = targets[k] - _outputOutput[k];
+            sumSquaredError += diff * diff;
         }
-        double sampleError = 0.5 * Math.Pow(totalOutputError, 2);
+        double sampleError = 0.5 * sumSquaredError;
 
-        // 5. Atualização dos pesos Oculta -> Saída: W_jk += lr * error_k * output_j
-        for (int j = 0; j < HiddenSize; j++)
+        // 5. Atualização dos pesos e bias: Camada Oculta -> Saída
+        // W_jk += lr * delta_k * output_j
+        // B_k  += lr * delta_k
+        for (int k = 0; k < OutputSize; k++)
         {
-            for (int k = 0; k < OutputSize; k++)
+            BiasOutput[k] += LearningRate * _outputError[k];
+            for (int j = 0; j < HiddenSize; j++)
             {
                 WeightsHiddenToOutput[j, k] += LearningRate * _outputError[k] * _hiddenOutput[j];
             }
         }
 
-        // 6. Atualização dos pesos Entrada -> Oculta: W_ij += lr * error_j * input_i
-        for (int i = 0; i < InputSize; i++)
+        // 6. Atualização dos pesos e bias: Camada de Entrada -> Oculta
+        // W_ij += lr * delta_j * input_i
+        // B_j  += lr * delta_j
+        for (int j = 0; j < HiddenSize; j++)
         {
-            for (int j = 0; j < HiddenSize; j++)
+            BiasHidden[j] += LearningRate * _hiddenError[j];
+            for (int i = 0; i < InputSize; i++)
             {
                 WeightsInputToHidden[i, j] += LearningRate * _hiddenError[j] * inputs[i];
             }
@@ -189,7 +224,7 @@ public class NeuralNetwork
 
     /// <summary>
     /// Treina a rede por múltiplas épocas até o erro convergir ou atingir o limite de épocas.
-    /// Suporta um callback para streaming do progresso (perfeito para WebSocket).
+    /// Utiliza embaralhamento estocástico por época (SGD) para evitar viés de sequência de classes.
     /// </summary>
     public TrainingResult Train(
         double[][] inputs,
@@ -206,16 +241,28 @@ public class NeuralNetwork
         double currentAverageError = double.PositiveInfinity;
         int epoch = 0;
 
+        int n = inputs.Length;
+        int[] indices = new int[n];
+        for (int i = 0; i < n; i++) indices[i] = i;
+
         while (epoch < maxEpochs && currentAverageError > targetMinError)
         {
+            // Embaralhamento estocástico (Fisher-Yates) por época
+            for (int i = n - 1; i > 0; i--)
+            {
+                int swapIdx = _rng.Next(i + 1);
+                (indices[i], indices[swapIdx]) = (indices[swapIdx], indices[i]);
+            }
+
             double epochErrorSum = 0.0;
 
-            for (int i = 0; i < inputs.Length; i++)
+            for (int idx = 0; idx < n; idx++)
             {
+                int i = indices[idx];
                 epochErrorSum += TrainSample(inputs[i], targets[i]);
             }
 
-            currentAverageError = epochErrorSum / inputs.Length;
+            currentAverageError = epochErrorSum / n;
             epoch++;
 
             // Emite progresso nos intervalos ou no término

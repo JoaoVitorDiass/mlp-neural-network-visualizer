@@ -24,6 +24,9 @@ import {
   Hash,
   Binary,
   PieChart,
+  SplitSquareVertical,
+  Files,
+  CheckCircle2,
 } from "lucide-react";
 import { UseDatasetReturn } from "../../hooks/useDataset";
 import { PRESETS } from "../../data/presets";
@@ -33,16 +36,20 @@ import { ColumnRoleSelector } from "./ColumnRoleSelector";
 export interface DatasetStudioProps {
   dataset: UseDatasetReturn;
   trainingRate?: number;
+  sameFileForTesting?: boolean;
+  onSameFileForTestingChange?: (val: boolean) => void;
 }
 
 export const DatasetStudio: React.FC<DatasetStudioProps> = ({
   dataset,
   trainingRate = 0.7,
+  onSameFileForTestingChange,
 }) => {
   const [showNormalized, setShowNormalized] = useState(false);
   const [activeMode, setActiveMode] = useState<"preset" | "upload">(
     dataset.currentPresetId ? "preset" : "upload"
   );
+  const [previewTarget, setPreviewTarget] = useState<"train" | "test">("train");
 
   const {
     currentPresetId,
@@ -52,26 +59,44 @@ export const DatasetStudio: React.FC<DatasetStudioProps> = ({
     processedDataset,
     isLoading,
     error,
+    isSeparateTestFile,
+    setIsSeparateTestFile,
+    testFileName,
+    testRawRows,
+    testProcessedDataset,
+    testError,
     loadPreset,
     loadCsvFile,
+    loadTestCsvFile,
+    clearTestFile,
     setColumnRole,
   } = dataset;
 
-  const totalSamples = rawRows.length;
+  const totalTrainSamples = rawRows.length;
+  const totalTestSamples = isSeparateTestFile ? testRawRows.length : Math.max(0, totalTrainSamples - Math.round(totalTrainSamples * trainingRate));
+  const effectiveTrainCount = isSeparateTestFile ? totalTrainSamples : Math.round(totalTrainSamples * trainingRate);
+
   const inputCount = processedDataset?.inputCount ?? 0;
   const outputCount = processedDataset?.outputCount ?? 0;
-  const trainCount = Math.round(totalSamples * Math.max(0.1, Math.min(1.0, trainingRate)));
-  const testCount = Math.max(0, totalSamples - trainCount);
 
-  // Table preview rows (first 6 rows)
+  // Active preview rows
+  const activeRawRows = previewTarget === "test" && isSeparateTestFile ? testRawRows : rawRows;
+  const activeProcessed = previewTarget === "test" && isSeparateTestFile ? testProcessedDataset : processedDataset;
+
   const previewRows = showNormalized
-    ? (processedDataset?.normalizedRows ?? []).slice(0, 6)
-    : rawRows.slice(0, 6);
+    ? (activeProcessed?.normalizedRows ?? []).slice(0, 6)
+    : activeRawRows.slice(0, 6);
 
-  // Table columns to display
   const previewColumns = showNormalized
     ? Object.keys(previewRows[0] || {})
     : columns.map((c) => c.name);
+
+  const handleTogglePartitionMode = (separate: boolean) => {
+    setIsSeparateTestFile(separate);
+    if (onSameFileForTestingChange) {
+      onSameFileForTestingChange(!separate);
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -105,7 +130,7 @@ export const DatasetStudio: React.FC<DatasetStudioProps> = ({
                     startContent={<Sparkles className="h-3.5 w-3.5" />}
                     className="font-medium"
                   >
-                    {p.name} ({p.sampleCount} amostras)
+                    {p.name} ({p.sampleCount} {p.testSampleCount ? `+ ${p.testSampleCount} teste` : "amostras"})
                   </Button>
                 );
               })}
@@ -130,35 +155,100 @@ export const DatasetStudio: React.FC<DatasetStudioProps> = ({
         {/* Left Column: Dropzone & Dataset Info */}
         <div className="lg:col-span-5 space-y-6">
           <Card className="border border-default-200/50 bg-content1/60 backdrop-blur-md shadow-sm">
-            <CardHeader className="flex gap-3 pb-2">
-              <div className="p-2 rounded-lg bg-primary/10 text-primary">
-                {activeMode === "upload" ? (
-                  <UploadCloud className="h-5 w-5" />
-                ) : (
-                  <FileSpreadsheet className="h-5 w-5" />
-                )}
+            <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-2">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-lg bg-primary/10 text-primary">
+                  {activeMode === "upload" ? (
+                    <UploadCloud className="h-5 w-5" />
+                  ) : (
+                    <FileSpreadsheet className="h-5 w-5" />
+                  )}
+                </div>
+                <div>
+                  <h3 className="text-base font-semibold">
+                    {activeMode === "upload" ? "Envio de Arquivos CSV" : "Informações do Dataset Ativo"}
+                  </h3>
+                  <p className="text-xs text-default-500">
+                    {activeMode === "upload"
+                      ? "Arraste e solte arquivos de treino e teste"
+                      : "Características do benchmark pré-carregado"}
+                  </p>
+                </div>
               </div>
-              <div>
-                <h3 className="text-base font-semibold">
-                  {activeMode === "upload" ? "Enviar Arquivo CSV" : "Informações do Dataset Ativo"}
-                </h3>
-                <p className="text-xs text-default-500">
-                  {activeMode === "upload"
-                    ? "Arraste e solte ou selecione arquivos"
-                    : "Características do benchmark pré-carregado"}
-                </p>
+
+              {/* Partition Mode Selector Pill */}
+              <div className="flex items-center gap-1.5 p-1 rounded-xl bg-default-100/70 border border-default-200/50 text-xs">
+                <Button
+                  size="sm"
+                  variant={!isSeparateTestFile ? "solid" : "light"}
+                  color={!isSeparateTestFile ? "primary" : "default"}
+                  onClick={() => handleTogglePartitionMode(false)}
+                  className="h-7 text-[11px] px-2.5 font-medium"
+                  startContent={<SplitSquareVertical className="h-3 w-3" />}
+                >
+                  Arquivo Único
+                </Button>
+                <Button
+                  size="sm"
+                  variant={isSeparateTestFile ? "solid" : "light"}
+                  color={isSeparateTestFile ? "secondary" : "default"}
+                  onClick={() => handleTogglePartitionMode(true)}
+                  className="h-7 text-[11px] px-2.5 font-medium"
+                  startContent={<Files className="h-3 w-3" />}
+                >
+                  Arquivos Separados
+                </Button>
               </div>
             </CardHeader>
             <Divider />
             <CardBody className="p-4 sm:p-5 space-y-4">
               {activeMode === "upload" ? (
-                <CsvDropzone
-                  onFileLoaded={loadCsvFile}
-                  fileName={fileName}
-                  rowCount={rawRows.length}
-                  isLoading={isLoading}
-                  error={error}
-                />
+                <div className="space-y-4">
+                  {/* Training File Dropzone */}
+                  <div className="space-y-1.5">
+                    <span className="text-xs font-semibold text-foreground flex items-center gap-1.5">
+                      <FileSpreadsheet className="h-3.5 w-3.5 text-primary" />
+                      Arquivo de Treinamento (.csv)
+                    </span>
+                    <CsvDropzone
+                      onFileLoaded={loadCsvFile}
+                      fileName={fileName}
+                      rowCount={rawRows.length}
+                      isLoading={isLoading}
+                      error={error}
+                    />
+                  </div>
+
+                  {/* Test File Dropzone (if Separate Files Mode is active) */}
+                  {isSeparateTestFile && (
+                    <div className="space-y-1.5 pt-2 border-t border-default-200/40">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-semibold text-foreground flex items-center gap-1.5">
+                          <CheckCircle2 className="h-3.5 w-3.5 text-secondary" />
+                          Arquivo Dedicado de Teste (.csv)
+                        </span>
+                        {testFileName && (
+                          <Button
+                            size="sm"
+                            variant="light"
+                            color="danger"
+                            onClick={clearTestFile}
+                            className="h-6 text-[10px] px-2"
+                          >
+                            Remover teste
+                          </Button>
+                        )}
+                      </div>
+                      <CsvDropzone
+                        onFileLoaded={loadTestCsvFile}
+                        fileName={testFileName || undefined}
+                        rowCount={testRawRows.length > 0 ? testRawRows.length : undefined}
+                        isLoading={isLoading}
+                        error={testError}
+                      />
+                    </div>
+                  )}
+                </div>
               ) : (
                 <div className="space-y-4">
                   <div className="p-4 rounded-2xl bg-content2/40 border border-default-200/50 space-y-2">
@@ -166,12 +256,21 @@ export const DatasetStudio: React.FC<DatasetStudioProps> = ({
                       <span className="text-xs text-default-500 uppercase tracking-wider font-semibold">
                         Dataset Pré-definido
                       </span>
-                      <Chip size="sm" color="primary" variant="flat">
-                        {fileName}
-                      </Chip>
+                      <div className="flex items-center gap-1.5">
+                        <Chip size="sm" color="primary" variant="flat">
+                          Treino: {fileName}
+                        </Chip>
+                        {testFileName && (
+                          <Chip size="sm" color="secondary" variant="flat">
+                            Teste: {testFileName}
+                          </Chip>
+                        )}
+                      </div>
                     </div>
                     <p className="text-xs text-default-600 leading-relaxed">
-                      {currentPresetId === "iris"
+                      {currentPresetId === "base-benchmark"
+                        ? "Base de dados clássica (6 entradas, 5 classes CA/CB/CC/CD/CE) com pares dedicados de treinamento (827 amostras) e teste (352 amostras)."
+                        : currentPresetId === "iris"
                         ? "Dataset Fisher Iris: 150 flores com 4 atributos físicos contínuos e 3 classes de espécies balanceadas (Setosa, Versicolor, Virginica)."
                         : "Dataset ColorBalls: 400 amostras espaciais com 4 atributos de coordenadas classificados em 4 cores distintas (Azul, Verde, Vermelho, Amarelo)."}
                     </p>
@@ -197,9 +296,9 @@ export const DatasetStudio: React.FC<DatasetStudioProps> = ({
                 <div className="p-3 rounded-xl bg-content2/30 border border-default-200/40 space-y-1">
                   <div className="flex items-center gap-1.5 text-xs text-default-500">
                     <Hash className="h-3.5 w-3.5 text-primary" />
-                    <span>Total de Amostras</span>
+                    <span>Amostras de Treino</span>
                   </div>
-                  <p className="text-lg font-bold text-foreground">{totalSamples}</p>
+                  <p className="text-lg font-bold text-foreground">{effectiveTrainCount}</p>
                 </div>
 
                 <div className="p-3 rounded-xl bg-content2/30 border border-default-200/40 space-y-1">
@@ -217,18 +316,24 @@ export const DatasetStudio: React.FC<DatasetStudioProps> = ({
                   <div className="flex items-center justify-between text-xs text-default-500">
                     <div className="flex items-center gap-1.5">
                       <PieChart className="h-3.5 w-3.5 text-success" />
-                      <span>Divisão Treino / Teste</span>
+                      <span>
+                        {isSeparateTestFile
+                          ? "Particionamento por Arquivos Dedicados"
+                          : "Divisão Treino / Teste (Percentual)"}
+                      </span>
                     </div>
                     <span className="font-semibold text-foreground">
-                      {Math.round(trainingRate * 100)}% / {100 - Math.round(trainingRate * 100)}%
+                      {isSeparateTestFile
+                        ? "100% Treino / Teste Externo"
+                        : `${Math.round(trainingRate * 100)}% / ${100 - Math.round(trainingRate * 100)}%`}
                     </span>
                   </div>
                   <div className="flex items-center gap-2 text-xs">
                     <Chip size="sm" color="primary" variant="flat" className="h-5 text-[11px]">
-                      Treino: {trainCount} amostras
+                      Treino: {effectiveTrainCount} amostras
                     </Chip>
                     <Chip size="sm" color="secondary" variant="flat" className="h-5 text-[11px]">
-                      Teste: {testCount} amostras
+                      Teste: {totalTestSamples} amostras {isSeparateTestFile ? "(Dedicado)" : "(Divisão)"}
                     </Chip>
                   </div>
                 </div>
@@ -267,7 +372,9 @@ export const DatasetStudio: React.FC<DatasetStudioProps> = ({
               <TableProperties className="h-4 w-4" />
             </div>
             <div>
-              <h3 className="text-sm font-semibold">Prévia Tabular do Dataset (Primeiras 6 Amostras)</h3>
+              <h3 className="text-sm font-semibold">
+                Prévia Tabular do Dataset ({previewTarget === "test" ? "Arquivo de Teste" : "Arquivo de Treino"})
+              </h3>
               <p className="text-xs text-default-500">
                 {showNormalized
                   ? "Normalizado Min-Max em [0, 1] com codificação One-Hot para classes"
@@ -276,15 +383,41 @@ export const DatasetStudio: React.FC<DatasetStudioProps> = ({
             </div>
           </div>
 
-          <div className="flex items-center gap-2 self-end sm:self-auto">
-            <span className="text-xs text-default-600 font-medium">Exibir Normalizado [0, 1]</span>
-            <Switch
-              size="sm"
-              color="primary"
-              isSelected={showNormalized}
-              onValueChange={setShowNormalized}
-              aria-label="Alternar Visualização Normalizada"
-            />
+          <div className="flex flex-wrap items-center gap-3 self-end sm:self-auto">
+            {/* Toggle between Train vs Test preview if test dataset loaded */}
+            {isSeparateTestFile && testRawRows.length > 0 && (
+              <div className="flex items-center gap-1 p-0.5 rounded-lg bg-default-100 text-xs">
+                <Button
+                  size="sm"
+                  variant={previewTarget === "train" ? "solid" : "light"}
+                  color={previewTarget === "train" ? "primary" : "default"}
+                  onClick={() => setPreviewTarget("train")}
+                  className="h-6 text-[10px] px-2 font-medium"
+                >
+                  Ver Treino
+                </Button>
+                <Button
+                  size="sm"
+                  variant={previewTarget === "test" ? "solid" : "light"}
+                  color={previewTarget === "test" ? "secondary" : "default"}
+                  onClick={() => setPreviewTarget("test")}
+                  className="h-6 text-[10px] px-2 font-medium"
+                >
+                  Ver Teste
+                </Button>
+              </div>
+            )}
+
+            <div className="flex items-center gap-2">
+              <span className="text-xs text-default-600 font-medium">Exibir Normalizado [0, 1]</span>
+              <Switch
+                size="sm"
+                color="primary"
+                isSelected={showNormalized}
+                onValueChange={setShowNormalized}
+                aria-label="Alternar Visualização Normalizada"
+              />
+            </div>
           </div>
         </CardHeader>
         <Divider />
