@@ -27,9 +27,9 @@ export const SplitSlider: React.FC<SplitSliderProps> = ({
           <SplitSquareVertical className="h-5 w-5" />
         </div>
         <div>
-          <h3 className="text-base font-semibold">Train / Test Dataset Partitioning</h3>
+          <h3 className="text-base font-semibold">Particionamento de Dados (Treino / Teste)</h3>
           <p className="text-xs text-default-500">
-            Configure dataset split ratio and cross-validation behavior
+            Configure a proporção da divisão do dataset e validação
           </p>
         </div>
       </CardHeader>
@@ -39,10 +39,10 @@ export const SplitSlider: React.FC<SplitSliderProps> = ({
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-4 rounded-2xl bg-content2/40 border border-default-200/50">
           <div className="space-y-1">
             <span className="text-xs font-semibold uppercase tracking-wider text-default-500">
-              Sample Distribution
+              Distribuição de Amostras
             </span>
             <p className="text-sm font-bold text-foreground">
-              {percentage}% Training / {100 - percentage}% Testing
+              {percentage}% Treino / {100 - percentage}% Teste
             </p>
           </div>
 
@@ -53,7 +53,7 @@ export const SplitSlider: React.FC<SplitSliderProps> = ({
               variant="flat"
               startContent={<PieChart className="h-3 w-3 ml-1" />}
             >
-              Train: {trainCount} samples
+              Treino: {trainCount} amostras
             </Chip>
             <Chip
               size="sm"
@@ -61,7 +61,7 @@ export const SplitSlider: React.FC<SplitSliderProps> = ({
               variant="flat"
               startContent={<CheckCircle2 className="h-3 w-3 ml-1" />}
             >
-              Test: {testCount} samples
+              Teste: {testCount} amostras
             </Chip>
           </div>
         </div>
@@ -69,11 +69,11 @@ export const SplitSlider: React.FC<SplitSliderProps> = ({
         {/* HeroUI Slider */}
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <label className="text-xs font-semibold text-foreground">Training Split Ratio</label>
+            <label className="text-xs font-semibold text-foreground">Proporção de Treino</label>
             <span className="text-xs font-mono font-bold text-primary">{percentage}%</span>
           </div>
           <Slider
-            aria-label="Training Split Ratio"
+            aria-label="Proporção de Treino"
             size="md"
             step={5}
             minValue={50}
@@ -101,10 +101,10 @@ export const SplitSlider: React.FC<SplitSliderProps> = ({
         <div className="flex items-center justify-between gap-4">
           <div className="space-y-0.5">
             <label className="text-xs font-semibold text-foreground">
-              Use Same File for Testing & Validation
+              Usar o Mesmo Arquivo para Teste e Validação
             </label>
             <p className="text-[11px] text-default-500 leading-tight">
-              When enabled, training and test samples are partitioned from the same active dataset.
+              Quando ativado, as amostras de treino e teste são particionadas a partir do mesmo dataset ativo.
             </p>
           </div>
           <Switch
@@ -112,7 +112,7 @@ export const SplitSlider: React.FC<SplitSliderProps> = ({
             color="primary"
             isSelected={sameFileForTesting}
             onValueChange={(isSelected) => onChange({ sameFileForTesting: isSelected })}
-            aria-label="Same file for testing"
+            aria-label="Usar o mesmo arquivo para teste"
           />
         </div>
       </CardBody>

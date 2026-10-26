@@ -33,7 +33,7 @@ export const ColumnRoleSelector: React.FC<ColumnRoleSelectorProps> = ({
         <div className="flex items-center gap-2">
           <Layers className="h-4 w-4 text-primary" />
           <span className="text-xs font-semibold uppercase tracking-wider text-default-600">
-            Column Roles
+            Papéis das Colunas
           </span>
         </div>
         <div className="flex flex-wrap items-center gap-2">
@@ -43,7 +43,7 @@ export const ColumnRoleSelector: React.FC<ColumnRoleSelectorProps> = ({
             variant="flat"
             startContent={<ArrowRightCircle className="h-3 w-3 ml-1" />}
           >
-            {inputCount} Inputs
+            {inputCount} Entradas
           </Chip>
           <Chip
             size="sm"
@@ -51,7 +51,7 @@ export const ColumnRoleSelector: React.FC<ColumnRoleSelectorProps> = ({
             variant="flat"
             startContent={<Target className="h-3 w-3 ml-1" />}
           >
-            {targetCount > 0 ? "1 Target Class" : "0 Target Classes"}
+            {targetCount > 0 ? "1 Classe Alvo" : "0 Classes Alvo"}
           </Chip>
           <Chip
             size="sm"
@@ -59,7 +59,7 @@ export const ColumnRoleSelector: React.FC<ColumnRoleSelectorProps> = ({
             variant="flat"
             startContent={<EyeOff className="h-3 w-3 ml-1" />}
           >
-            {ignoreCount} Ignored
+            {ignoreCount} Ignoradas
           </Chip>
         </div>
       </div>
@@ -68,13 +68,13 @@ export const ColumnRoleSelector: React.FC<ColumnRoleSelectorProps> = ({
       {targetCount === 0 && (
         <div className="flex items-center gap-2 p-3 text-xs rounded-xl bg-warning/10 text-warning border border-warning/20">
           <AlertTriangle className="h-4 w-4 shrink-0" />
-          <span>No target column selected. Please designate one column as the classification target.</span>
+          <span>Nenhuma coluna alvo selecionada. Por favor, defina uma coluna como alvo de classificação.</span>
         </div>
       )}
       {inputCount === 0 && (
         <div className="flex items-center gap-2 p-3 text-xs rounded-xl bg-danger/10 text-danger border border-danger/20">
           <AlertTriangle className="h-4 w-4 shrink-0" />
-          <span>No input feature columns selected. Select at least 1 input feature.</span>
+          <span>Nenhuma coluna de entrada selecionada. Selecione ao menos 1 atributo de entrada.</span>
         </div>
       )}
 
@@ -109,7 +109,7 @@ export const ColumnRoleSelector: React.FC<ColumnRoleSelectorProps> = ({
                         color={col.type === "numeric" ? "primary" : "secondary"}
                         className="text-[10px] h-5 border-none"
                       >
-                        {col.type}
+                        {col.type === "numeric" ? "numérico" : "categórico"}
                       </Chip>
                     </div>
                     {/* Metadata bounds or unique classes */}
@@ -118,7 +118,7 @@ export const ColumnRoleSelector: React.FC<ColumnRoleSelectorProps> = ({
                         <span className="flex items-center gap-1">
                           <Hash className="h-3 w-3 shrink-0" />
                           <span>
-                            Range: [{col.min.toFixed(1)}, {col.max.toFixed(1)}]
+                            Intervalo: [{col.min.toFixed(1)}, {col.max.toFixed(1)}]
                           </span>
                         </span>
                       ) : col.uniqueValues ? (
@@ -140,13 +140,13 @@ export const ColumnRoleSelector: React.FC<ColumnRoleSelectorProps> = ({
                     color={isTarget ? "success" : isInput ? "primary" : "default"}
                     className="capitalize text-[11px] h-6 shrink-0"
                   >
-                    {col.role}
+                    {isTarget ? "Alvo" : isInput ? "Entrada" : "Ignorada"}
                   </Chip>
                 </div>
 
                 {/* Role Switcher Button Group */}
                 <ButtonGroup size="sm" variant="flat" className="w-full">
-                  <Tooltip content="Use as neural network input feature">
+                  <Tooltip content="Usar como atributo de entrada da rede neural">
                     <Button
                       color={isInput ? "primary" : "default"}
                       variant={isInput ? "solid" : "flat"}
@@ -154,10 +154,10 @@ export const ColumnRoleSelector: React.FC<ColumnRoleSelectorProps> = ({
                       className="flex-1 text-xs font-medium"
                       startContent={<ArrowRightCircle className="h-3 w-3" />}
                     >
-                      Input
+                      Entrada
                     </Button>
                   </Tooltip>
-                  <Tooltip content="Designate as one-hot target classification label">
+                  <Tooltip content="Definir como rótulo de classe alvo (codificação one-hot)">
                     <Button
                       color={isTarget ? "success" : "default"}
                       variant={isTarget ? "solid" : "flat"}
@@ -165,10 +165,10 @@ export const ColumnRoleSelector: React.FC<ColumnRoleSelectorProps> = ({
                       className="flex-1 text-xs font-medium"
                       startContent={<Binary className="h-3 w-3" />}
                     >
-                      Target
+                      Classe
                     </Button>
                   </Tooltip>
-                  <Tooltip content="Exclude from training and vector extraction">
+                  <Tooltip content="Ignorar no treinamento e na extração de vetores">
                     <Button
                       color={isIgnore ? "danger" : "default"}
                       variant={isIgnore ? "solid" : "flat"}
@@ -176,7 +176,7 @@ export const ColumnRoleSelector: React.FC<ColumnRoleSelectorProps> = ({
                       className="flex-1 text-xs font-medium"
                       startContent={<EyeOff className="h-3 w-3" />}
                     >
-                      Ignore
+                      Ignorar
                     </Button>
                   </Tooltip>
                 </ButtonGroup>

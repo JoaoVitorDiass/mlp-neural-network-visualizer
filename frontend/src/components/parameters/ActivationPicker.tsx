@@ -23,31 +23,31 @@ const ACTIVATION_OPTIONS: ActivationOption[] = [
   {
     id: "Logistica",
     name: "Logística (Sigmoide)",
-    subtitle: "Standard Smooth Nonlinearity",
+    subtitle: "Não-linearidade Suave Padrão",
     formula: "f(x) = 1 / (1 + e⁻ˣ)",
     derivative: "f'(y) = y · (1 - y)",
     range: "[0.0, 1.0]",
-    description: "Ideal for binary and multi-class one-hot indicators. Outputs strictly between 0 and 1.",
+    description: "Ideal para saídas binárias e multiclasse com codificação one-hot. Valores estritamente entre 0 e 1.",
     color: "primary",
   },
   {
     id: "Hiperbolica",
     name: "Hiperbólica (Tanh)",
-    subtitle: "Zero-Centered S-Curve",
+    subtitle: "Curva em S Centrada no Zero",
     formula: "f(x) = tanh(x)",
     derivative: "f'(y) = 1 - y²",
     range: "[-1.0, 1.0]",
-    description: "Zero-centered with stronger gradients near origin, reducing bias shift across layers.",
+    description: "Centrada em zero com gradientes mais fortes próximos à origem, reduzindo o deslocamento de viés.",
     color: "secondary",
   },
   {
     id: "Linear",
     name: "Linear",
-    subtitle: "Identity Proportional Scaling",
+    subtitle: "Escala Proporcional Identidade",
     formula: "f(x) = x / 10",
     derivative: "f'(y) = 0.1",
     range: "(-∞, +∞)",
-    description: "Scaled linear activation providing proportional gradients for regression tasks.",
+    description: "Ativação linear escalonada fornecendo gradientes constantes para problemas de regressão.",
     color: "success",
   },
 ];
@@ -63,9 +63,9 @@ export const ActivationPicker: React.FC<ActivationPickerProps> = ({
           <Activity className="h-5 w-5" />
         </div>
         <div>
-          <h3 className="text-base font-semibold">Activation Function (Transfer Function)</h3>
+          <h3 className="text-base font-semibold">Função de Ativação (Função de Transferência)</h3>
           <p className="text-xs text-default-500">
-            Select the mathematical non-linearity applied across hidden and output layers
+            Selecione a não-linearidade matemática aplicada nas camadas oculta e de saída
           </p>
         </div>
       </CardHeader>
@@ -101,13 +101,13 @@ export const ActivationPicker: React.FC<ActivationPickerProps> = ({
                 {/* Mathematical Formula Preview */}
                 <div className="my-3 p-2.5 rounded-xl bg-content1/80 border border-default-200/50 font-mono text-center space-y-1">
                   <p className="text-xs font-semibold text-primary">{opt.formula}</p>
-                  <p className="text-[10px] text-default-500">Deriv: {opt.derivative}</p>
+                  <p className="text-[10px] text-default-500">Derivada: {opt.derivative}</p>
                 </div>
 
                 {/* Footer: Output Range and Description */}
                 <div className="space-y-2">
                   <div className="flex items-center justify-between text-[11px]">
-                    <span className="text-default-500 font-medium">Output Range:</span>
+                    <span className="text-default-500 font-medium">Intervalo de Saída:</span>
                     <Chip size="sm" variant="flat" color={opt.color} className="h-5 text-[10px]">
                       {opt.range}
                     </Chip>

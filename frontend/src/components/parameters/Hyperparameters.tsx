@@ -24,9 +24,9 @@ export const Hyperparameters: React.FC<HyperparametersProps> = ({
             <Gauge className="h-5 w-5" />
           </div>
           <div>
-            <h3 className="text-base font-semibold">Training Hyperparameters</h3>
+            <h3 className="text-base font-semibold">Hiperparâmetros de Treinamento</h3>
             <p className="text-xs text-default-500">
-              Configure convergence thresholds, learning step, and epoch budget
+              Configure critérios de convergência, taxa de aprendizado e limite de épocas
             </p>
           </div>
         </div>
@@ -40,7 +40,7 @@ export const Hyperparameters: React.FC<HyperparametersProps> = ({
             startContent={<RotateCcw className="h-3.5 w-3.5" />}
             className="text-xs"
           >
-            Reset Defaults
+            Restaurar Padrões
           </Button>
         )}
       </CardHeader>
@@ -51,9 +51,9 @@ export const Hyperparameters: React.FC<HyperparametersProps> = ({
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-1">
               <label className="text-xs font-semibold text-foreground">
-                Learning Rate (<span className="font-serif italic">&eta;</span>)
+                Taxa de Aprendizado (<span className="font-serif italic">&eta;</span>)
               </label>
-              <Tooltip content="Step size taken along the negative gradient during backpropagation weight updates. Recommended: 0.05 - 0.3.">
+              <Tooltip content="Tamanho do passo no sentido do gradiente negativo durante a atualização dos pesos via backpropagation. Recomendado: 0.05 - 0.3.">
                 <Info className="h-3 w-3 text-default-400 cursor-pointer" />
               </Tooltip>
             </div>
@@ -73,7 +73,7 @@ export const Hyperparameters: React.FC<HyperparametersProps> = ({
               }
             }}
             startContent={<Sparkles className="h-3.5 w-3.5 text-warning" />}
-            description="Gradient descent step multiplier"
+            description="Multiplicador do passo no gradiente descendente"
           />
         </div>
 
@@ -82,9 +82,9 @@ export const Hyperparameters: React.FC<HyperparametersProps> = ({
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-1">
               <label className="text-xs font-semibold text-foreground">
-                Target Minimum Error (<span className="font-serif italic">E<sub>min</sub></span>)
+                Erro Mínimo Desejado (<span className="font-serif italic">E<sub>min</sub></span>)
               </label>
-              <Tooltip content="Early stopping barrier. When average sample error drops below this value, training halts successfully. Recommended: 0.01 - 0.03.">
+              <Tooltip content="Critério de parada antecipada. Quando o erro médio por amostra cair abaixo deste valor, o treino finaliza com sucesso. Recomendado: 0.01 - 0.03.">
                 <Info className="h-3 w-3 text-default-400 cursor-pointer" />
               </Tooltip>
             </div>
@@ -104,7 +104,7 @@ export const Hyperparameters: React.FC<HyperparametersProps> = ({
               }
             }}
             startContent={<Target className="h-3.5 w-3.5 text-danger" />}
-            description="Early convergence stop threshold"
+            description="Limiar de parada para convergência antecipada"
           />
         </div>
 
@@ -112,8 +112,8 @@ export const Hyperparameters: React.FC<HyperparametersProps> = ({
         <div className="space-y-1.5">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-1">
-              <label className="text-xs font-semibold text-foreground">Maximum Epochs</label>
-              <Tooltip content="Upper limit on full passes over the training dataset. SignalR progress emits ~100 events across this span.">
+              <label className="text-xs font-semibold text-foreground">Máximo de Épocas</label>
+              <Tooltip content="Limite máximo de passagens completas pelo dataset de treino. O SignalR emite eventos em tempo real ao longo dessa execução.">
                 <Info className="h-3 w-3 text-default-400 cursor-pointer" />
               </Tooltip>
             </div>
@@ -133,7 +133,7 @@ export const Hyperparameters: React.FC<HyperparametersProps> = ({
               }
             }}
             startContent={<Repeat className="h-3.5 w-3.5 text-primary" />}
-            description="Maximum training iterations"
+            description="Número máximo de iterações de treino"
           />
         </div>
       </CardBody>

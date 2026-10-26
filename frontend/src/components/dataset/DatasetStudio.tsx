@@ -82,10 +82,10 @@ export const DatasetStudio: React.FC<DatasetStudioProps> = ({
             <div className="space-y-1">
               <div className="flex items-center gap-2">
                 <Database className="h-5 w-5 text-primary" />
-                <h2 className="text-lg font-bold text-foreground">Select Benchmark or Upload Dataset</h2>
+                <h2 className="text-lg font-bold text-foreground">Selecione um Dataset Padrão ou Envie o Seu</h2>
               </div>
               <p className="text-xs text-default-500">
-                Choose standard ML benchmarks for instant 1-click training, or upload your own CSV.
+                Escolha benchmarks clássicos para treino imediato com 1 clique ou faça upload do seu arquivo CSV.
               </p>
             </div>
 
@@ -105,7 +105,7 @@ export const DatasetStudio: React.FC<DatasetStudioProps> = ({
                     startContent={<Sparkles className="h-3.5 w-3.5" />}
                     className="font-medium"
                   >
-                    {p.name} ({p.sampleCount} samples)
+                    {p.name} ({p.sampleCount} amostras)
                   </Button>
                 );
               })}
@@ -118,7 +118,7 @@ export const DatasetStudio: React.FC<DatasetStudioProps> = ({
                 startContent={<UploadCloud className="h-3.5 w-3.5" />}
                 className="font-medium"
               >
-                Upload Custom CSV
+                Enviar CSV Próprio
               </Button>
             </div>
           </div>
@@ -140,12 +140,12 @@ export const DatasetStudio: React.FC<DatasetStudioProps> = ({
               </div>
               <div>
                 <h3 className="text-base font-semibold">
-                  {activeMode === "upload" ? "Upload CSV File" : "Active Dataset Information"}
+                  {activeMode === "upload" ? "Enviar Arquivo CSV" : "Informações do Dataset Ativo"}
                 </h3>
                 <p className="text-xs text-default-500">
                   {activeMode === "upload"
-                    ? "Drag and drop or browse files"
-                    : "Pre-loaded benchmark characteristics"}
+                    ? "Arraste e solte ou selecione arquivos"
+                    : "Características do benchmark pré-carregado"}
                 </p>
               </div>
             </CardHeader>
@@ -164,7 +164,7 @@ export const DatasetStudio: React.FC<DatasetStudioProps> = ({
                   <div className="p-4 rounded-2xl bg-content2/40 border border-default-200/50 space-y-2">
                     <div className="flex items-center justify-between">
                       <span className="text-xs text-default-500 uppercase tracking-wider font-semibold">
-                        Preset Benchmark
+                        Dataset Pré-definido
                       </span>
                       <Chip size="sm" color="primary" variant="flat">
                         {fileName}
@@ -172,13 +172,13 @@ export const DatasetStudio: React.FC<DatasetStudioProps> = ({
                     </div>
                     <p className="text-xs text-default-600 leading-relaxed">
                       {currentPresetId === "iris"
-                        ? "Fisher's Iris dataset: 150 flowers with 4 continuous physical dimensions and 3 balanced species classes (Setosa, Versicolor, Virginica)."
-                        : "ColorBalls dataset: 400 spatial samples across 4 coordinate features classified into 4 distinct colors (Blue, Green, Red, Yellow)."}
+                        ? "Dataset Fisher Iris: 150 flores com 4 atributos físicos contínuos e 3 classes de espécies balanceadas (Setosa, Versicolor, Virginica)."
+                        : "Dataset ColorBalls: 400 amostras espaciais com 4 atributos de coordenadas classificados em 4 cores distintas (Azul, Verde, Vermelho, Amarelo)."}
                     </p>
                   </div>
 
                   <div className="flex items-center justify-between pt-1">
-                    <span className="text-xs text-default-500">Need to test custom data?</span>
+                    <span className="text-xs text-default-500">Deseja testar dados próprios?</span>
                     <Button
                       size="sm"
                       variant="light"
@@ -186,7 +186,7 @@ export const DatasetStudio: React.FC<DatasetStudioProps> = ({
                       onClick={() => setActiveMode("upload")}
                       startContent={<UploadCloud className="h-3.5 w-3.5" />}
                     >
-                      Switch to File Uploader
+                      Alternar para Envio de Arquivo
                     </Button>
                   </div>
                 </div>
@@ -197,7 +197,7 @@ export const DatasetStudio: React.FC<DatasetStudioProps> = ({
                 <div className="p-3 rounded-xl bg-content2/30 border border-default-200/40 space-y-1">
                   <div className="flex items-center gap-1.5 text-xs text-default-500">
                     <Hash className="h-3.5 w-3.5 text-primary" />
-                    <span>Total Samples</span>
+                    <span>Total de Amostras</span>
                   </div>
                   <p className="text-lg font-bold text-foreground">{totalSamples}</p>
                 </div>
@@ -205,11 +205,11 @@ export const DatasetStudio: React.FC<DatasetStudioProps> = ({
                 <div className="p-3 rounded-xl bg-content2/30 border border-default-200/40 space-y-1">
                   <div className="flex items-center gap-1.5 text-xs text-default-500">
                     <Layers className="h-3.5 w-3.5 text-secondary" />
-                    <span>Inputs / Outputs</span>
+                    <span>Entradas / Saídas</span>
                   </div>
                   <p className="text-lg font-bold text-foreground">
-                    {inputCount} <span className="text-xs text-default-500 font-normal">in</span> / {outputCount}{" "}
-                    <span className="text-xs text-default-500 font-normal">out</span>
+                    {inputCount} <span className="text-xs text-default-500 font-normal">entradas</span> / {outputCount}{" "}
+                    <span className="text-xs text-default-500 font-normal">saídas</span>
                   </p>
                 </div>
 
@@ -217,7 +217,7 @@ export const DatasetStudio: React.FC<DatasetStudioProps> = ({
                   <div className="flex items-center justify-between text-xs text-default-500">
                     <div className="flex items-center gap-1.5">
                       <PieChart className="h-3.5 w-3.5 text-success" />
-                      <span>Train / Test Split Ratio</span>
+                      <span>Divisão Treino / Teste</span>
                     </div>
                     <span className="font-semibold text-foreground">
                       {Math.round(trainingRate * 100)}% / {100 - Math.round(trainingRate * 100)}%
@@ -225,10 +225,10 @@ export const DatasetStudio: React.FC<DatasetStudioProps> = ({
                   </div>
                   <div className="flex items-center gap-2 text-xs">
                     <Chip size="sm" color="primary" variant="flat" className="h-5 text-[11px]">
-                      Train: {trainCount} samples
+                      Treino: {trainCount} amostras
                     </Chip>
                     <Chip size="sm" color="secondary" variant="flat" className="h-5 text-[11px]">
-                      Test: {testCount} samples
+                      Teste: {testCount} amostras
                     </Chip>
                   </div>
                 </div>
@@ -245,9 +245,9 @@ export const DatasetStudio: React.FC<DatasetStudioProps> = ({
                 <Binary className="h-5 w-5" />
               </div>
               <div>
-                <h3 className="text-base font-semibold">Interactive Column Configuration</h3>
+                <h3 className="text-base font-semibold">Configuração Interativa de Colunas</h3>
                 <p className="text-xs text-default-500">
-                  Assign inputs, target classification label, or ignore IDs
+                  Defina entradas, rótulo de classificação alvo ou ignore identificadores
                 </p>
               </div>
             </CardHeader>
@@ -267,23 +267,23 @@ export const DatasetStudio: React.FC<DatasetStudioProps> = ({
               <TableProperties className="h-4 w-4" />
             </div>
             <div>
-              <h3 className="text-sm font-semibold">Dataset Tabular Preview (First 6 Samples)</h3>
+              <h3 className="text-sm font-semibold">Prévia Tabular do Dataset (Primeiras 6 Amostras)</h3>
               <p className="text-xs text-default-500">
                 {showNormalized
-                  ? "Min-Max normalized to [0, 1] with One-Hot encoded target indicators"
-                  : "Original raw dataset values"}
+                  ? "Normalizado Min-Max em [0, 1] com codificação One-Hot para classes"
+                  : "Valores brutos originais do dataset"}
               </p>
             </div>
           </div>
 
           <div className="flex items-center gap-2 self-end sm:self-auto">
-            <span className="text-xs text-default-600 font-medium">Show Normalized [0, 1]</span>
+            <span className="text-xs text-default-600 font-medium">Exibir Normalizado [0, 1]</span>
             <Switch
               size="sm"
               color="primary"
               isSelected={showNormalized}
               onValueChange={setShowNormalized}
-              aria-label="Toggle Normalized View"
+              aria-label="Alternar Visualização Normalizada"
             />
           </div>
         </CardHeader>
@@ -291,11 +291,11 @@ export const DatasetStudio: React.FC<DatasetStudioProps> = ({
         <CardBody className="p-0 overflow-x-auto">
           {previewRows.length === 0 ? (
             <div className="py-12 text-center text-xs text-default-500">
-              No preview data available
+              Nenhum dado de prévia disponível
             </div>
           ) : (
             <Table
-              aria-label="Dataset Preview Table"
+              aria-label="Tabela de Prévia do Dataset"
               removeWrapper
               className="min-w-full text-xs"
               classNames={{

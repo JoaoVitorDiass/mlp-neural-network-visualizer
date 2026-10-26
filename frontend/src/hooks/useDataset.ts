@@ -63,7 +63,7 @@ export function useDataset(): UseDatasetReturn {
       setFileName(customFileName || (presetId ? `${presetId}.csv` : "custom.csv"));
       setCurrentPresetId(presetId ?? null);
     } catch (err: any) {
-      setError(err?.message || "Failed to parse CSV dataset");
+      setError(err?.message || "Falha ao processar o dataset CSV");
     } finally {
       setIsLoading(false);
     }
@@ -72,7 +72,7 @@ export function useDataset(): UseDatasetReturn {
   const loadPreset = useCallback((presetId: string) => {
     const preset = getPresetById(presetId);
     if (!preset) {
-      setError(`Preset '${presetId}' not found`);
+      setError(`Preset '${presetId}' não encontrado`);
       return;
     }
     loadCsvStringInternal(preset.csvContent, `${preset.name}.csv`, preset.id);
@@ -88,12 +88,12 @@ export function useDataset(): UseDatasetReturn {
 
     try {
       if (!file.name.toLowerCase().endsWith(".csv")) {
-        throw new Error("File must be a valid .csv file");
+        throw new Error("O arquivo deve ser um formato .csv válido");
       }
       const text = await file.text();
       loadCsvStringInternal(text, file.name, undefined);
     } catch (err: any) {
-      setError(err?.message || "Failed to read CSV file");
+      setError(err?.message || "Falha ao ler o arquivo CSV");
       setIsLoading(false);
     }
   }, [loadCsvStringInternal]);

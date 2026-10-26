@@ -63,7 +63,7 @@ export const Navbar: React.FC<NavbarProps> = ({ theme, onToggleTheme }) => {
             MLP Visualizer
           </p>
           <p className="text-xs text-default-500 font-mono">
-            Neural Network Studio
+            Rede Neural Artificial
           </p>
         </div>
       </NavbarBrand>
@@ -74,8 +74,8 @@ export const Navbar: React.FC<NavbarProps> = ({ theme, onToggleTheme }) => {
           <Tooltip
             content={
               isOnline
-                ? `Backend online: ${health?.message || "Ready"} (${health?.timestamp || "Active"})`
-                : "Cannot reach backend at http://localhost:5134. Check if ASP.NET Core API is running."
+                ? `Backend Conectado: ${health?.message || "Pronto"} (${health?.timestamp || "Ativo"})`
+                : "Não foi possível conectar ao backend em http://localhost:5134. Verifique se a API ASP.NET Core está em execução."
             }
             placement="bottom"
           >
@@ -92,7 +92,7 @@ export const Navbar: React.FC<NavbarProps> = ({ theme, onToggleTheme }) => {
                     <RefreshCw className="h-3 w-3 animate-spin text-default-500 ml-1" />
                   }
                 >
-                  Checking...
+                  Verificando...
                 </Chip>
               ) : isOnline ? (
                 <Chip
@@ -107,7 +107,7 @@ export const Navbar: React.FC<NavbarProps> = ({ theme, onToggleTheme }) => {
                   }
                   className="font-medium text-xs text-emerald-600 dark:text-emerald-400"
                 >
-                  API Online
+                  API Conectada
                 </Chip>
               ) : (
                 <Chip
@@ -121,7 +121,7 @@ export const Navbar: React.FC<NavbarProps> = ({ theme, onToggleTheme }) => {
                   }
                   className="font-medium text-xs text-rose-600 dark:text-rose-400"
                 >
-                  {isChecking ? "Rechecking..." : "API Offline"}
+                  {isChecking ? "Reverificando..." : "API Desconectada"}
                 </Chip>
               )}
             </div>

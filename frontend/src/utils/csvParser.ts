@@ -14,7 +14,7 @@ export interface CsvParseResult {
  */
 export function parseCsvString(csvContent: string): CsvParseResult {
   if (!csvContent || csvContent.trim() === "") {
-    return { data: [], columnNames: [], error: "CSV content cannot be empty" };
+    return { data: [], columnNames: [], error: "O conteúdo CSV não pode estar vazio" };
   }
 
   const result = Papa.parse<Record<string, any>>(csvContent, {
@@ -27,7 +27,7 @@ export function parseCsvString(csvContent: string): CsvParseResult {
     return {
       data: [],
       columnNames: [],
-      error: result.errors[0]?.message || "Failed to parse CSV",
+      error: result.errors[0]?.message || "Falha ao processar o CSV",
     };
   }
 
@@ -44,7 +44,7 @@ export function parseCsvString(csvContent: string): CsvParseResult {
     return {
       data: [],
       columnNames: [],
-      error: "CSV must contain a header row and at least one non-empty data row",
+      error: "O CSV deve conter uma linha de cabeçalho e pelo menos uma linha de dados não vazia",
     };
   }
 

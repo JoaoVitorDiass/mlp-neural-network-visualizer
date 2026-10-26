@@ -406,7 +406,7 @@ export const colorBallsPreset: DatasetPreset = {
   id: "colorballs",
   name: "ColorBalls",
   description:
-    "Benchmark spatial classification dataset: 400 samples across 4 discrete spatial/coordinate features with 4 color target classes (Blue, Green, Red, Yellow).",
+    "Benchmark de classificação espacial: 400 amostras com 4 atributos espaciais/coordenadas e 4 classes de cores alvo (Azul, Verde, Vermelho, Amarelo).",
   sampleCount: 400,
   featureCount: 4,
   classCount: 4,

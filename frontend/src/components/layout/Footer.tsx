@@ -8,7 +8,7 @@ export const Footer: React.FC = () => {
       <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-default-500">
         <div className="flex items-center gap-2">
           <Layers className="h-4 w-4 text-primary" />
-          <span>Multi-Layer Perceptron (MLP) Neural Network Visualizer v1.0.0</span>
+          <span>Visualizador de Rede Neural Perceptron Multicamadas (MLP) v1.0.0</span>
         </div>
 
         <div className="flex flex-wrap items-center justify-center gap-2">
@@ -29,14 +29,14 @@ export const Footer: React.FC = () => {
         <div className="flex items-center gap-4">
           <span className="flex items-center gap-1 font-mono text-[11px]">
             <Zap className="h-3.5 w-3.5 text-warning-500" />
-            60 FPS Real-Time Training
+            Treinamento em Tempo Real a 60 FPS
           </span>
           <Link
             isExternal
             href="https://github.com"
             color="foreground"
             className="text-default-500 hover:text-default-900 transition-colors"
-            aria-label="GitHub Repository"
+            aria-label="Repositório GitHub"
           >
             <svg
               className="h-4 w-4 fill-current"

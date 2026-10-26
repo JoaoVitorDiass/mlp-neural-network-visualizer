@@ -36,11 +36,11 @@ export const CsvDropzone: React.FC<CsvDropzoneProps> = ({
   const validateAndUpload = (file: File) => {
     setValidationError(null);
     if (!file.name.toLowerCase().endsWith(".csv")) {
-      setValidationError("Only .csv files are supported.");
+      setValidationError("Apenas arquivos .csv são suportados.");
       return;
     }
     if (file.size === 0) {
-      setValidationError("Uploaded file is empty (0 bytes).");
+      setValidationError("O arquivo enviado está vazio (0 bytes).");
       return;
     }
     onFileLoaded(file);
@@ -114,13 +114,13 @@ export const CsvDropzone: React.FC<CsvDropzoneProps> = ({
 
           <div className="space-y-1">
             <p className="text-sm font-semibold text-foreground">
-              {fileName ? "Loaded Dataset" : "Drag & drop CSV file here"}
+              {fileName ? "Dataset Carregado" : "Arraste e solte o arquivo CSV aqui"}
             </p>
             <p className="text-xs text-default-500">
               {fileName ? (
                 <span className="font-mono text-primary font-medium">{fileName}</span>
               ) : (
-                "or click to browse from your device (.csv format)"
+                "ou clique para selecionar do dispositivo (.csv)"
               )}
             </p>
           </div>
@@ -128,7 +128,7 @@ export const CsvDropzone: React.FC<CsvDropzoneProps> = ({
           {fileName && typeof rowCount === "number" && (
             <div className="flex items-center gap-2 pt-1">
               <Chip size="sm" color="success" variant="flat" startContent={<FileSpreadsheet className="h-3.5 w-3.5 ml-1" />}>
-                {rowCount} rows loaded
+                {rowCount} linhas carregadas
               </Chip>
               <Button
                 size="sm"
@@ -141,7 +141,7 @@ export const CsvDropzone: React.FC<CsvDropzoneProps> = ({
                 isLoading={isLoading}
                 className="text-xs h-7 px-2"
               >
-                Choose another
+                Trocar arquivo
               </Button>
             </div>
           )}

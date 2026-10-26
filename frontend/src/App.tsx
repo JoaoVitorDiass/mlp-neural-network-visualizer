@@ -138,19 +138,18 @@ export const App: React.FC = () => {
                   color="primary"
                   startContent={<Sparkles className="h-3.5 w-3.5 ml-1" />}
                 >
-                  Modern AI Visualizer
+                  Visualizador de IA Moderno
                 </Chip>
                 <Chip size="sm" variant="flat" color="secondary">
-                  Backpropagation & SignalR
+                  Retropropagação & SignalR
                 </Chip>
               </div>
               <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight bg-gradient-to-r from-foreground via-foreground/90 to-primary bg-clip-text text-transparent">
-                Multi-Layer Perceptron Studio
+                Estúdio de Perceptron Multicamadas (MLP)
               </h1>
               <p className="text-sm sm:text-base text-default-600 leading-relaxed">
-                Configure network topology, stream training epochs at 60 FPS
-                over WebSockets, and analyze interactive confusion matrix
-                evaluations in real-time.
+                Configure a topologia da rede, acompanhe as épocas de treinamento em tempo real
+                a 60 FPS via WebSockets e analise o desempenho na matriz de confusão interativa.
               </p>
             </div>
 
@@ -164,7 +163,7 @@ export const App: React.FC = () => {
                 onClick={() => setSelectedTab("training")}
                 className="font-medium"
               >
-                Go to Training Studio
+                Ir para o Treinamento
               </Button>
             </div>
           </div>
@@ -173,7 +172,7 @@ export const App: React.FC = () => {
         {/* Studio Navigation Tabs */}
         <div className="flex flex-col gap-6">
           <Tabs
-            aria-label="Studio Navigation"
+            aria-label="Navegação do Estúdio"
             selectedKey={selectedTab}
             onSelectionChange={(key) => setSelectedTab(key as string)}
             color="primary"
@@ -190,7 +189,7 @@ export const App: React.FC = () => {
               title={
                 <div className="flex items-center gap-2">
                   <Database className="h-4 w-4" />
-                  <span>1. Datasets & Features</span>
+                  <span>1. Datasets & Dados</span>
                 </div>
               }
             />
@@ -199,7 +198,7 @@ export const App: React.FC = () => {
               title={
                 <div className="flex items-center gap-2">
                   <Sliders className="h-4 w-4" />
-                  <span>2. Hyperparameter Studio</span>
+                  <span>2. Hiperparâmetros</span>
                 </div>
               }
             />
@@ -208,7 +207,7 @@ export const App: React.FC = () => {
               title={
                 <div className="flex items-center gap-2">
                   <PlayCircle className="h-4 w-4" />
-                  <span>3. Real-Time Training</span>
+                  <span>3. Treinamento ao Vivo</span>
                 </div>
               }
             />
@@ -217,7 +216,7 @@ export const App: React.FC = () => {
               title={
                 <div className="flex items-center gap-2">
                   <BarChart3 className="h-4 w-4" />
-                  <span>4. Evaluation & Metrics</span>
+                  <span>4. Avaliação & Métricas</span>
                 </div>
               }
             />
@@ -248,7 +247,7 @@ export const App: React.FC = () => {
                       onClick={() => setSelectedTab("parameters")}
                       className="font-medium"
                     >
-                      Configure Hyperparameters
+                      Configurar Hiperparâmetros
                     </Button>
                   </div>
                 </div>
@@ -288,7 +287,7 @@ export const App: React.FC = () => {
                       onClick={() => setSelectedTab("datasets")}
                       className="font-medium"
                     >
-                      ← Back to Dataset
+                      ← Voltar aos Datasets
                     </Button>
                     <Button
                       color="primary"
@@ -298,7 +297,7 @@ export const App: React.FC = () => {
                       onClick={() => setSelectedTab("training")}
                       className="font-medium"
                     >
-                      Proceed to Real-Time Training
+                      Avançar para o Treinamento
                     </Button>
                   </div>
                 </div>
@@ -314,7 +313,7 @@ export const App: React.FC = () => {
                     datasetName={
                       dataset.currentPresetId
                         ? dataset.currentPresetId.toUpperCase()
-                        : dataset.fileName || "Custom CSV"
+                        : dataset.fileName || "CSV Personalizado"
                     }
                     datasetRowCount={dataset.rawRows.length}
                     canStart={Boolean(
@@ -504,7 +503,7 @@ export const App: React.FC = () => {
                             Nenhum Modelo Treinado Ainda
                           </p>
                           <p className="text-xs text-default-500 max-w-sm">
-                            Inicie o treinamento na aba "Real-Time Training" para gerar a matriz de confusão e o relatório de desempenho.
+                            Inicie o treinamento na aba "3. Treinamento ao Vivo" para gerar a matriz de confusão e o relatório de desempenho.
                           </p>
                         </div>
                         <Button

@@ -21,7 +21,7 @@ export const ThemeToggle: React.FC<ThemeToggleProps> = ({
       isIconOnly
       variant="flat"
       size="sm"
-      aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
+      aria-label={isDark ? "Alternar para tema claro" : "Alternar para tema escuro"}
       onClick={onToggle}
       className={`rounded-full bg-default-100 hover:bg-default-200 transition-colors ${className}`}
     >

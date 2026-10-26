@@ -156,7 +156,7 @@ export const irisPreset: DatasetPreset = {
   id: "iris",
   name: "Iris",
   description:
-    "Standard Iris benchmark dataset: 150 samples across 3 balanced species classes (Setosa, Versicolor, Virginica) with 4 continuous morphological features.",
+    "Dataset clássico Fisher Iris: 150 amostras divididas em 3 espécies balanceadas (Setosa, Versicolor, Virginica) com 4 atributos morfológicos contínuos.",
   sampleCount: 150,
   featureCount: 4,
   classCount: 3,
