@@ -76,16 +76,18 @@ export const TrainingControlBar: React.FC<TrainingControlBarProps> = ({
 
   return (
     <Card className="border border-amber-200/80 dark:border-amber-950/40 bg-white/80 dark:bg-content1/70 backdrop-blur-md shadow-sm rounded-2xl">
-      <CardBody className="p-4 sm:p-5 flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4">
-        {/* Left Column: Title, SignalR Pill, and Status */}
-        <div className="flex flex-wrap items-center gap-3">
-          <div className="flex items-center gap-2">
-            <div className="p-2 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400">
-              <Play className="h-5 w-5 fill-current" />
+      <CardBody className="p-5 space-y-4">
+        {/* Row 1: Header / Status on Left and Primary Action Buttons on Right */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="flex flex-wrap items-center gap-3">
+            <div className="flex items-center gap-2.5">
+              <div className="p-2.5 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400 shrink-0">
+                <Play className="h-5 w-5 fill-current" />
+              </div>
+              <h2 className="text-base sm:text-lg font-bold tracking-tight text-foreground">
+                Estúdio de Treinamento
+              </h2>
             </div>
-            <h2 className="text-base sm:text-lg font-bold tracking-tight text-foreground">
-              Estúdio de Treinamento
-            </h2>
 
             {/* SignalR Connection Status Pill */}
             <Tooltip
@@ -110,7 +112,7 @@ export const TrainingControlBar: React.FC<TrainingControlBarProps> = ({
                         <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
                       </span>
                     }
-                    className="font-medium text-xs text-emerald-600 dark:text-emerald-400"
+                    className="font-semibold text-xs text-emerald-600 dark:text-emerald-400 rounded-xl"
                   >
                     SignalR Live
                   </Chip>
@@ -120,7 +122,7 @@ export const TrainingControlBar: React.FC<TrainingControlBarProps> = ({
                     variant="flat"
                     color="warning"
                     startContent={<RefreshCw className="h-3 w-3 animate-spin text-amber-500 ml-1" />}
-                    className="font-medium text-xs text-amber-600 dark:text-amber-400"
+                    className="font-medium text-xs text-amber-600 dark:text-amber-400 rounded-xl"
                   >
                     Conectando Hub...
                   </Chip>
@@ -130,58 +132,129 @@ export const TrainingControlBar: React.FC<TrainingControlBarProps> = ({
                     variant="flat"
                     color="default"
                     startContent={<Radio className="h-3 w-3 text-default-400 ml-1" />}
-                    className="font-medium text-xs text-default-500"
+                    className="font-medium text-xs text-default-500 rounded-xl"
                   >
                     SignalR Offline
                   </Chip>
                 )}
               </div>
             </Tooltip>
+
+            {/* Session Status Pill */}
+            {status !== "idle" && (
+              <Chip
+                size="sm"
+                variant="shadow"
+                color={
+                  isCompleted
+                    ? "success"
+                    : isTraining
+                    ? "primary"
+                    : isError
+                    ? "danger"
+                    : isStopped
+                    ? "warning"
+                    : "default"
+                }
+                startContent={
+                  isCompleted ? (
+                    <CheckCircle2 className="h-3.5 w-3.5 ml-1" />
+                  ) : isStopped ? (
+                    <AlertTriangle className="h-3.5 w-3.5 ml-1" />
+                  ) : undefined
+                }
+                className="capitalize font-semibold text-xs rounded-xl"
+              >
+                {status === "training" && "Em Treinamento"}
+                {status === "connecting" && "Preparando Sessão..."}
+                {status === "completed" && "Concluído"}
+                {status === "stopped" && "Interrompido"}
+                {status === "error" && "Erro"}
+              </Chip>
+            )}
           </div>
 
-          {/* Session Status Pill */}
-          {status !== "idle" && (
-            <Chip
-              size="sm"
-              variant="shadow"
-              color={
-                isCompleted
-                  ? "success"
-                  : isTraining
-                  ? "primary"
-                  : isError
-                  ? "danger"
-                  : isStopped
-                  ? "warning"
-                  : "default"
-              }
-              startContent={
-                isCompleted ? (
-                  <CheckCircle2 className="h-3.5 w-3.5 ml-1" />
-                ) : isStopped ? (
-                  <AlertTriangle className="h-3.5 w-3.5 ml-1" />
-                ) : undefined
-              }
-              className="capitalize font-semibold text-xs"
-            >
-              {status === "training" && "Em Treinamento"}
-              {status === "connecting" && "Preparando Sessão..."}
-              {status === "completed" && "Concluído"}
-              {status === "stopped" && "Interrompido"}
-              {status === "error" && "Erro"}
-            </Chip>
-          )}
+          {/* Action Buttons */}
+          <div className="flex items-center gap-2 self-end sm:self-auto">
+            {/* Reset / Clear Button */}
+            {(isCompleted || isStopped || isError) && (
+              <Button
+                size="md"
+                variant="flat"
+                color="default"
+                startContent={<RotateCcw className="h-4 w-4" />}
+                onClick={onReset}
+                className="font-medium text-xs sm:text-sm rounded-xl"
+              >
+                Novo Treinamento
+              </Button>
+            )}
+
+            {/* Completed State: Transition to Evaluation CTA */}
+            {isCompleted && (
+              <Button
+                size="md"
+                variant="shadow"
+                color="success"
+                endContent={<ArrowRight className="h-4 w-4" />}
+                onClick={onViewEvaluation}
+                className="font-bold text-xs sm:text-sm rounded-xl px-4"
+              >
+                Ver Avaliação
+              </Button>
+            )}
+
+            {/* Active Training: Interromper (Stop) Button */}
+            {(isTraining || isConnecting) && (
+              <Button
+                size="md"
+                variant="flat"
+                color="danger"
+                startContent={<Square className="h-4 w-4 fill-current" />}
+                onClick={onStop}
+                className="font-bold text-xs sm:text-sm rounded-xl px-4"
+              >
+                Interromper
+              </Button>
+            )}
+
+            {/* Idle / Error / Stopped State: Iniciar Treinamento Primary CTA */}
+            {!isTraining && !isConnecting && !isCompleted && (
+              <Tooltip
+                content={
+                  !canStart
+                    ? "Selecione ou carregue um dataset válido antes de iniciar"
+                    : "Iniciar treinamento com backpropagation"
+                }
+                isDisabled={canStart}
+              >
+                <div>
+                  <Button
+                    size="md"
+                    variant="shadow"
+                    color="primary"
+                    isDisabled={!canStart}
+                    startContent={<Play className="h-4 w-4 fill-current" />}
+                    onClick={onStart}
+                    className="font-bold text-xs sm:text-sm shadow-primary/30 rounded-xl px-5"
+                  >
+                    Iniciar Treinamento
+                  </Button>
+                </div>
+              </Tooltip>
+            )}
+          </div>
         </div>
 
-        {/* Center: Dataset & Topology Summary Badge */}
-        <div className="flex flex-wrap items-center gap-2">
+        {/* Row 2: Dataset, Topology and Hyperparameters Pills */}
+        <div className="flex flex-wrap items-center gap-2 pt-3 border-t border-amber-100/80 dark:border-default-200/40 text-xs">
           {/* Dataset Badge */}
           <Chip
             size="sm"
             variant="flat"
             color="primary"
             startContent={<Database className="h-3.5 w-3.5 ml-1 text-primary" />}
-            className="font-medium text-xs"
+            className="font-medium text-xs rounded-xl"
           >
             Treino: {datasetName} ({datasetRowCount} amostras)
           </Chip>
@@ -192,7 +265,7 @@ export const TrainingControlBar: React.FC<TrainingControlBarProps> = ({
               variant="flat"
               color="secondary"
               startContent={<Database className="h-3.5 w-3.5 ml-1 text-secondary" />}
-              className="font-medium text-xs"
+              className="font-medium text-xs rounded-xl"
             >
               Teste: {testDatasetName || "Teste"} ({testRowCount} amostras)
             </Chip>
@@ -204,7 +277,7 @@ export const TrainingControlBar: React.FC<TrainingControlBarProps> = ({
             variant="flat"
             color="secondary"
             startContent={<Cpu className="h-3.5 w-3.5 ml-1 text-secondary" />}
-            className="font-mono text-xs font-semibold"
+            className="font-mono text-xs font-semibold rounded-xl"
           >
             {parameters.inputLayer} → {parameters.hiddenLayer} → {parameters.outputLayer}
           </Chip>
@@ -214,81 +287,10 @@ export const TrainingControlBar: React.FC<TrainingControlBarProps> = ({
             size="sm"
             variant="bordered"
             startContent={<Sliders className="h-3.5 w-3.5 ml-1 text-default-500" />}
-            className="font-mono text-xs hidden sm:inline-flex"
+            className="font-mono text-xs rounded-xl hidden sm:inline-flex"
           >
             η: {parameters.learningRate} | {parameters.transferFunction} | Épocas: {parameters.epochs}
           </Chip>
-        </div>
-
-        {/* Right Column: Action Buttons */}
-        <div className="flex items-center gap-2 justify-end">
-          {/* Reset / Clear Button */}
-          {(isCompleted || isStopped || isError) && (
-            <Button
-              size="md"
-              variant="flat"
-              color="default"
-              startContent={<RotateCcw className="h-4 w-4" />}
-              onClick={onReset}
-              className="font-medium text-xs sm:text-sm"
-            >
-              Novo Treinamento
-            </Button>
-          )}
-
-          {/* Completed State: Transition to Evaluation CTA */}
-          {isCompleted && (
-            <Button
-              size="md"
-              variant="shadow"
-              color="success"
-              endContent={<ArrowRight className="h-4 w-4" />}
-              onClick={onViewEvaluation}
-              className="font-semibold text-xs sm:text-sm"
-            >
-              Ver Avaliação
-            </Button>
-          )}
-
-          {/* Active Training: Interromper (Stop) Button */}
-          {(isTraining || isConnecting) && (
-            <Button
-              size="md"
-              variant="flat"
-              color="danger"
-              startContent={<Square className="h-4 w-4 fill-current" />}
-              onClick={onStop}
-              className="font-semibold text-xs sm:text-sm"
-            >
-              Interromper
-            </Button>
-          )}
-
-          {/* Idle / Error / Stopped State: Iniciar Treinamento Primary CTA */}
-          {!isTraining && !isConnecting && !isCompleted && (
-            <Tooltip
-              content={
-                !canStart
-                  ? "Selecione ou carregue um dataset válido antes de iniciar"
-                  : "Iniciar treinamento com backpropagation"
-              }
-              isDisabled={canStart}
-            >
-              <div>
-                <Button
-                  size="md"
-                  variant="shadow"
-                  color="primary"
-                  isDisabled={!canStart}
-                  startContent={<Play className="h-4 w-4 fill-current" />}
-                  onClick={onStart}
-                  className="font-semibold text-xs sm:text-sm shadow-primary/30"
-                >
-                  Iniciar Treinamento
-                </Button>
-              </div>
-            </Tooltip>
-          )}
         </div>
       </CardBody>
     </Card>

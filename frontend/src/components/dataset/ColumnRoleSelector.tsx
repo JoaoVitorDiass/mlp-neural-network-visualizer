@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, ButtonGroup, Chip, Card, CardBody, Tooltip } from "@heroui/react";
+import { Button, Chip, Card, CardBody, Tooltip } from "@heroui/react";
 import {
   Binary,
   Layers,
@@ -146,17 +146,18 @@ export const ColumnRoleSelector: React.FC<ColumnRoleSelectorProps> = ({
                   </Chip>
                 </div>
 
-                {/* Role Switcher Button Group */}
-                <ButtonGroup size="sm" variant="flat" className="w-full bg-white dark:bg-slate-900 p-1 rounded-xl border border-slate-200/80 dark:border-slate-800">
+                {/* Role Switcher - 3 Equal Columns with Ample Padding */}
+                <div className="grid grid-cols-3 gap-1 w-full bg-default-100/70 p-1 rounded-xl border border-default-200/60">
                   <Tooltip content="Usar como atributo numérico de entrada para a rede">
                     <Button
+                      size="sm"
                       color={isInput ? "primary" : "default"}
                       variant={isInput ? "solid" : "light"}
                       onClick={() => onRoleChange(col.name, "input")}
-                      className={`flex-1 text-xs font-semibold rounded-lg h-7 transition-all ${
-                        isInput ? "shadow-sm shadow-blue-500/20" : "text-default-600"
+                      className={`w-full text-[11px] font-semibold rounded-lg h-7 px-1 transition-all ${
+                        isInput ? "shadow-sm shadow-blue-500/25" : "text-default-600 hover:text-foreground"
                       }`}
-                      startContent={<ArrowRightCircle className="h-3.5 w-3.5" />}
+                      startContent={<ArrowRightCircle className="h-3 w-3 shrink-0" />}
                     >
                       Entrada
                     </Button>
@@ -164,13 +165,14 @@ export const ColumnRoleSelector: React.FC<ColumnRoleSelectorProps> = ({
 
                   <Tooltip content="Definir como rótulo de classe (saída one-hot)">
                     <Button
+                      size="sm"
                       color={isTarget ? "success" : "default"}
                       variant={isTarget ? "solid" : "light"}
                       onClick={() => onRoleChange(col.name, "target")}
-                      className={`flex-1 text-xs font-semibold rounded-lg h-7 transition-all ${
-                        isTarget ? "shadow-sm shadow-emerald-500/20" : "text-default-600"
+                      className={`w-full text-[11px] font-semibold rounded-lg h-7 px-1 transition-all ${
+                        isTarget ? "shadow-sm shadow-emerald-500/25" : "text-default-600 hover:text-foreground"
                       }`}
-                      startContent={<Binary className="h-3.5 w-3.5" />}
+                      startContent={<Binary className="h-3 w-3 shrink-0" />}
                     >
                       Classe
                     </Button>
@@ -178,18 +180,19 @@ export const ColumnRoleSelector: React.FC<ColumnRoleSelectorProps> = ({
 
                   <Tooltip content="Ignorar no treinamento e na extração de vetores">
                     <Button
+                      size="sm"
                       color={isIgnore ? "danger" : "default"}
                       variant={isIgnore ? "solid" : "light"}
                       onClick={() => onRoleChange(col.name, "ignore")}
-                      className={`flex-1 text-xs font-semibold rounded-lg h-7 transition-all ${
-                        isIgnore ? "shadow-sm shadow-rose-500/20" : "text-default-600"
+                      className={`w-full text-[11px] font-semibold rounded-lg h-7 px-1 transition-all ${
+                        isIgnore ? "shadow-sm shadow-rose-500/25" : "text-default-600 hover:text-foreground"
                       }`}
-                      startContent={<EyeOff className="h-3.5 w-3.5" />}
+                      startContent={<EyeOff className="h-3 w-3 shrink-0" />}
                     >
                       Ignorar
                     </Button>
                   </Tooltip>
-                </ButtonGroup>
+                </div>
               </CardBody>
             </Card>
           );

@@ -55,7 +55,7 @@ export const Hyperparameters: React.FC<HyperparametersProps> = ({
         </div>
 
         {/* Learning Rate (eta) */}
-        <div className="p-3.5 rounded-xl bg-default-100/50 border border-default-200/40 space-y-2">
+        <div className="p-4 rounded-2xl bg-slate-50/70 dark:bg-slate-900/30 border border-slate-200/70 dark:border-slate-800/60 shadow-sm space-y-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-1.5">
               <Sparkles className="h-4 w-4 text-amber-500" />
@@ -66,33 +66,35 @@ export const Hyperparameters: React.FC<HyperparametersProps> = ({
                 <Info className="h-3.5 w-3.5 text-default-400 cursor-pointer" />
               </Tooltip>
             </div>
-            <span className="text-xs font-mono font-bold text-amber-600 dark:text-amber-400">
+            <span className="text-xs font-mono font-bold text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/40 px-2 py-0.5 rounded-md border border-amber-200/60 dark:border-amber-900/40">
               {learningRate.toFixed(3)}
             </span>
           </div>
 
-          <Slider
-            aria-label="Taxa de Aprendizado"
-            size="sm"
-            step={0.005}
-            minValue={0.01}
-            maxValue={0.5}
-            value={learningRate}
-            onChange={(val) => {
-              if (typeof val === "number") {
-                onChange({ learningRate: val });
-              }
-            }}
-            color="warning"
-            className="w-full"
-          />
-          <p className="text-[10px] text-default-500">
-            Passo do gradiente descendente. Valores menores evitam overshoot; maiores aprendem mais rápido.
+          <div className="py-1">
+            <Slider
+              aria-label="Taxa de Aprendizado"
+              size="sm"
+              step={0.005}
+              minValue={0.01}
+              maxValue={0.5}
+              value={learningRate}
+              onChange={(val) => {
+                if (typeof val === "number") {
+                  onChange({ learningRate: val });
+                }
+              }}
+              color="warning"
+              className="w-full"
+            />
+          </div>
+          <p className="text-[11px] text-default-500 leading-relaxed">
+            Passo do gradiente descendente. Valores menores evitam oscilações; maiores aprendem mais rápido.
           </p>
         </div>
 
         {/* Target Minimum Error */}
-        <div className="p-3.5 rounded-xl bg-default-100/50 border border-default-200/40 space-y-2">
+        <div className="p-4 rounded-2xl bg-slate-50/70 dark:bg-slate-900/30 border border-slate-200/70 dark:border-slate-800/60 shadow-sm space-y-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-1.5">
               <Target className="h-4 w-4 text-rose-500" />
@@ -103,33 +105,35 @@ export const Hyperparameters: React.FC<HyperparametersProps> = ({
                 <Info className="h-3.5 w-3.5 text-default-400 cursor-pointer" />
               </Tooltip>
             </div>
-            <span className="text-xs font-mono font-bold text-rose-600 dark:text-rose-400">
+            <span className="text-xs font-mono font-bold text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/40 px-2 py-0.5 rounded-md border border-rose-200/60 dark:border-rose-900/40">
               {errorValue.toFixed(4)}
             </span>
           </div>
 
-          <Slider
-            aria-label="Erro Mínimo Desejado"
-            size="sm"
-            step={0.001}
-            minValue={0.001}
-            maxValue={0.1}
-            value={errorValue}
-            onChange={(val) => {
-              if (typeof val === "number") {
-                onChange({ errorValue: val });
-              }
-            }}
-            color="danger"
-            className="w-full"
-          />
-          <p className="text-[10px] text-default-500">
+          <div className="py-1">
+            <Slider
+              aria-label="Erro Mínimo Desejado"
+              size="sm"
+              step={0.001}
+              minValue={0.001}
+              maxValue={0.1}
+              value={errorValue}
+              onChange={(val) => {
+                if (typeof val === "number") {
+                  onChange({ errorValue: val });
+                }
+              }}
+              color="danger"
+              className="w-full"
+            />
+          </div>
+          <p className="text-[11px] text-default-500 leading-relaxed">
             Limiar de convergência. Quanto menor, mais rigorosa a precisão exigida da rede.
           </p>
         </div>
 
         {/* Maximum Epochs */}
-        <div className="p-3.5 rounded-xl bg-default-100/50 border border-default-200/40 space-y-2">
+        <div className="p-4 rounded-2xl bg-slate-50/70 dark:bg-slate-900/30 border border-slate-200/70 dark:border-slate-800/60 shadow-sm space-y-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-1.5">
               <Repeat className="h-4 w-4 text-sky-500" />
@@ -140,27 +144,29 @@ export const Hyperparameters: React.FC<HyperparametersProps> = ({
                 <Info className="h-3.5 w-3.5 text-default-400 cursor-pointer" />
               </Tooltip>
             </div>
-            <span className="text-xs font-mono font-bold text-sky-600 dark:text-sky-400">
+            <span className="text-xs font-mono font-bold text-sky-600 dark:text-sky-400 bg-sky-50 dark:bg-sky-950/40 px-2 py-0.5 rounded-md border border-sky-200/60 dark:border-sky-900/40">
               {epochs.toLocaleString()} épocas
             </span>
           </div>
 
-          <Slider
-            aria-label="Máximo de Épocas"
-            size="sm"
-            step={100}
-            minValue={100}
-            maxValue={5000}
-            value={epochs}
-            onChange={(val) => {
-              if (typeof val === "number") {
-                onChange({ epochs: val });
-              }
-            }}
-            color="primary"
-            className="w-full"
-          />
-          <p className="text-[10px] text-default-500">
+          <div className="py-1">
+            <Slider
+              aria-label="Máximo de Épocas"
+              size="sm"
+              step={100}
+              minValue={100}
+              maxValue={5000}
+              value={epochs}
+              onChange={(val) => {
+                if (typeof val === "number") {
+                  onChange({ epochs: val });
+                }
+              }}
+              color="primary"
+              className="w-full"
+            />
+          </div>
+          <p className="text-[11px] text-default-500 leading-relaxed">
             Limite máximo de iterações para evitar loops infinitos caso a rede não convirja.
           </p>
         </div>

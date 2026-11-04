@@ -124,13 +124,13 @@ export const ConfusionMatrixHeatmap: React.FC<ConfusionMatrixHeatmapProps> = ({
                     {labels.map((colName, cIndex) => (
                       <th
                         key={cIndex}
-                        className="p-2 text-xs font-semibold text-default-600 max-w-[120px] truncate"
+                        className="py-2.5 px-2 text-xs font-bold text-default-700 dark:text-default-300 min-w-[72px] max-w-[120px] truncate"
                         title={colName}
                       >
                         {colName}
                       </th>
                     ))}
-                    <th className="p-2 text-xs font-semibold text-default-400 border-l border-default-200/50">
+                    <th className="py-2.5 px-3 text-xs font-bold text-default-500 border-l border-default-200/60 min-w-[80px]">
                       Total Real
                     </th>
                   </tr>
@@ -140,7 +140,7 @@ export const ConfusionMatrixHeatmap: React.FC<ConfusionMatrixHeatmapProps> = ({
                     <tr key={rIndex} className="border-t border-default-200/40">
                       {/* Row Header */}
                       <td
-                        className="p-3 text-xs font-semibold text-default-700 dark:text-default-300 text-left whitespace-nowrap pr-4"
+                        className="p-3 text-xs font-bold text-default-800 dark:text-default-200 text-left whitespace-nowrap pr-4 min-w-[100px]"
                         title={rowName}
                       >
                         {rowName}
@@ -155,18 +155,18 @@ export const ConfusionMatrixHeatmap: React.FC<ConfusionMatrixHeatmapProps> = ({
                           if (val === 0) {
                             cellClass = "bg-default-50 dark:bg-default-100/20 text-default-400";
                           } else {
-                            cellClass = "bg-emerald-100/80 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-200 border-emerald-300 dark:border-emerald-800 font-bold";
+                            cellClass = "bg-emerald-100/80 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-200 border-emerald-300 dark:border-emerald-800 font-bold shadow-sm";
                           }
                         } else {
                           if (val > 0) {
-                            cellClass = "bg-rose-100/80 text-rose-800 dark:bg-rose-950/50 dark:text-rose-200 border-rose-300 dark:border-rose-900/50 font-semibold";
+                            cellClass = "bg-rose-100/80 text-rose-800 dark:bg-rose-950/50 dark:text-rose-200 border-rose-300 dark:border-rose-900/50 font-semibold shadow-sm";
                           } else {
                             cellClass = "bg-default-50/50 dark:bg-default-100/10 text-default-400";
                           }
                         }
 
                         return (
-                          <td key={cIndex} className="p-2">
+                          <td key={cIndex} className="p-2 min-w-[72px]">
                             <Tooltip
                               content={
                                 <div className="p-1 text-xs">
@@ -183,9 +183,9 @@ export const ConfusionMatrixHeatmap: React.FC<ConfusionMatrixHeatmapProps> = ({
                                 initial={{ scale: 0.9, opacity: 0 }}
                                 animate={{ scale: 1, opacity: 1 }}
                                 transition={{ duration: 0.2, delay: (rIndex * numClasses + cIndex) * 0.02 }}
-                                className={`rounded-xl py-3 px-2 transition-transform hover:scale-105 cursor-pointer shadow-sm border ${cellClass}`}
+                                className={`rounded-xl py-3 px-2 transition-transform hover:scale-105 cursor-pointer border ${cellClass}`}
                               >
-                                <span className="text-sm font-mono">{val}</span>
+                                <span className="text-sm font-mono font-bold">{val}</span>
                               </motion.div>
                             </Tooltip>
                           </td>

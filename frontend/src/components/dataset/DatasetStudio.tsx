@@ -211,9 +211,9 @@ export const DatasetStudio: React.FC<DatasetStudioProps> = ({
         {/* Left Column: Dropzone & Dataset Info */}
         <div className="lg:col-span-5 space-y-6">
           <Card className="border border-sky-100/80 dark:border-default-200/40 bg-white/80 dark:bg-content1/60 backdrop-blur-md shadow-sm rounded-2xl">
-            <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-2">
+            <CardHeader className="flex flex-col gap-3.5 pb-2">
               <div className="flex items-center gap-3">
-                <div className="p-2 rounded-xl bg-sky-500/10 text-sky-600 dark:text-sky-400">
+                <div className="p-2.5 rounded-xl bg-sky-500/10 text-sky-600 dark:text-sky-400 shrink-0">
                   {activeMode === "upload" ? (
                     <UploadCloud className="h-5 w-5" />
                   ) : (
@@ -221,7 +221,7 @@ export const DatasetStudio: React.FC<DatasetStudioProps> = ({
                   )}
                 </div>
                 <div>
-                  <h3 className="text-base font-semibold">
+                  <h3 className="text-base font-bold text-foreground">
                     {activeMode === "upload" ? "Envio de Arquivos CSV" : "Informações do Dataset Ativo"}
                   </h3>
                   <p className="text-xs text-default-500">
@@ -232,15 +232,15 @@ export const DatasetStudio: React.FC<DatasetStudioProps> = ({
                 </div>
               </div>
 
-              {/* Partition Mode Selector Pill */}
-              <div className="flex items-center gap-1.5 p-1 rounded-xl bg-default-100/70 border border-default-200/50 text-xs">
+              {/* Partition Mode Selector - Full width 2-column switcher to avoid cramp */}
+              <div className="grid grid-cols-2 gap-1 p-1 w-full rounded-xl bg-default-100/80 border border-default-200/60 text-xs">
                 <Button
                   size="sm"
                   variant={!isSeparateTestFile ? "solid" : "light"}
                   color={!isSeparateTestFile ? "primary" : "default"}
                   onClick={() => handleTogglePartitionMode(false)}
-                  className="h-7 text-[11px] px-2.5 font-medium rounded-lg"
-                  startContent={<SplitSquareVertical className="h-3 w-3" />}
+                  className="h-8 text-xs font-semibold rounded-lg"
+                  startContent={<SplitSquareVertical className="h-3.5 w-3.5" />}
                 >
                   Arquivo Único
                 </Button>
@@ -249,8 +249,8 @@ export const DatasetStudio: React.FC<DatasetStudioProps> = ({
                   variant={isSeparateTestFile ? "solid" : "light"}
                   color={isSeparateTestFile ? "secondary" : "default"}
                   onClick={() => handleTogglePartitionMode(true)}
-                  className="h-7 text-[11px] px-2.5 font-medium rounded-lg"
-                  startContent={<Files className="h-3 w-3" />}
+                  className="h-8 text-xs font-semibold rounded-lg"
+                  startContent={<Files className="h-3.5 w-3.5" />}
                 >
                   Arquivos Separados
                 </Button>
@@ -277,7 +277,7 @@ export const DatasetStudio: React.FC<DatasetStudioProps> = ({
 
                   {/* Test File Dropzone (if Separate Files Mode is active) */}
                   {isSeparateTestFile && (
-                    <div className="space-y-1.5 pt-2 border-t border-default-200/40">
+                    <div className="space-y-1.5 pt-3 border-t border-default-200/40">
                       <div className="flex items-center justify-between">
                         <span className="text-xs font-semibold text-foreground flex items-center gap-1.5">
                           <CheckCircle2 className="h-3.5 w-3.5 text-secondary" />
@@ -289,7 +289,7 @@ export const DatasetStudio: React.FC<DatasetStudioProps> = ({
                             variant="light"
                             color="danger"
                             onClick={clearTestFile}
-                            className="h-6 text-[10px] px-2"
+                            className="h-6 text-[10px] px-2 rounded-lg"
                           >
                             Remover teste
                           </Button>
@@ -307,23 +307,23 @@ export const DatasetStudio: React.FC<DatasetStudioProps> = ({
                 </div>
               ) : (
                 <div className="space-y-4">
-                  <div className="p-4 rounded-2xl bg-content2/40 border border-default-200/50 space-y-2">
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs text-default-500 uppercase tracking-wider font-semibold">
+                  <div className="p-4 rounded-2xl bg-sky-50/40 dark:bg-sky-950/20 border border-sky-100 dark:border-sky-900/30 space-y-2.5">
+                    <div className="flex flex-col gap-2">
+                      <span className="text-[10px] text-default-500 uppercase tracking-wider font-bold">
                         Dataset Pré-definido
                       </span>
-                      <div className="flex items-center gap-1.5">
-                        <Chip size="sm" color="primary" variant="flat">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <Chip size="sm" color="primary" variant="flat" className="h-6 text-xs font-mono font-medium">
                           Treino: {fileName}
                         </Chip>
                         {testFileName && (
-                          <Chip size="sm" color="secondary" variant="flat">
+                          <Chip size="sm" color="secondary" variant="flat" className="h-6 text-xs font-mono font-medium">
                             Teste: {testFileName}
                           </Chip>
                         )}
                       </div>
                     </div>
-                    <p className="text-xs text-default-600 leading-relaxed">
+                    <p className="text-xs text-default-600 leading-relaxed pt-1">
                       {currentPresetId === "base-benchmark"
                         ? "Base de dados clássica (6 entradas, 5 classes CA/CB/CC/CD/CE) com pares dedicados de treinamento (827 amostras) e teste (352 amostras)."
                         : currentPresetId === "iris"
@@ -340,38 +340,39 @@ export const DatasetStudio: React.FC<DatasetStudioProps> = ({
                       color="secondary"
                       onClick={() => setActiveMode("upload")}
                       startContent={<UploadCloud className="h-3.5 w-3.5" />}
+                      className="font-medium text-xs rounded-lg"
                     >
-                      Alternar para Envio de Arquivo
+                      Enviar CSV
                     </Button>
                   </div>
                 </div>
               )}
 
               {/* Dataset Summary Metrics */}
-              <div className="grid grid-cols-2 gap-3 pt-2">
-                <div className="p-3 rounded-xl bg-content2/30 border border-default-200/40 space-y-1">
+              <div className="grid grid-cols-2 gap-3 pt-1">
+                <div className="p-3.5 rounded-xl bg-content2/30 border border-default-200/50 space-y-1">
                   <div className="flex items-center gap-1.5 text-xs text-default-500">
-                    <Hash className="h-3.5 w-3.5 text-primary" />
+                    <Hash className="h-3.5 w-3.5 text-sky-600" />
                     <span>Amostras de Treino</span>
                   </div>
-                  <p className="text-lg font-bold text-foreground">{effectiveTrainCount}</p>
+                  <p className="text-xl font-bold font-mono text-foreground">{effectiveTrainCount}</p>
                 </div>
 
-                <div className="p-3 rounded-xl bg-content2/30 border border-default-200/40 space-y-1">
+                <div className="p-3.5 rounded-xl bg-content2/30 border border-default-200/50 space-y-1">
                   <div className="flex items-center gap-1.5 text-xs text-default-500">
-                    <Layers className="h-3.5 w-3.5 text-secondary" />
+                    <Layers className="h-3.5 w-3.5 text-purple-600" />
                     <span>Entradas / Saídas</span>
                   </div>
-                  <p className="text-lg font-bold text-foreground">
-                    {inputCount} <span className="text-xs text-default-500 font-normal">entradas</span> / {outputCount}{" "}
-                    <span className="text-xs text-default-500 font-normal">saídas</span>
+                  <p className="text-xl font-bold font-mono text-foreground">
+                    {inputCount} <span className="text-xs text-default-500 font-normal">in</span> / {outputCount}{" "}
+                    <span className="text-xs text-default-500 font-normal">out</span>
                   </p>
                 </div>
 
-                <div className="col-span-2 p-3 rounded-xl bg-content2/30 border border-default-200/40 space-y-1.5">
+                <div className="col-span-2 p-3.5 rounded-xl bg-content2/30 border border-default-200/50 space-y-2">
                   <div className="flex items-center justify-between text-xs text-default-500">
                     <div className="flex items-center gap-1.5">
-                      <PieChart className="h-3.5 w-3.5 text-success" />
+                      <PieChart className="h-3.5 w-3.5 text-emerald-600" />
                       <span>
                         {isSeparateTestFile
                           ? "Particionamento por Arquivos Dedicados"
@@ -384,11 +385,11 @@ export const DatasetStudio: React.FC<DatasetStudioProps> = ({
                         : `${Math.round(trainingRate * 100)}% / ${100 - Math.round(trainingRate * 100)}%`}
                     </span>
                   </div>
-                  <div className="flex items-center gap-2 text-xs">
-                    <Chip size="sm" color="primary" variant="flat" className="h-5 text-[11px]">
+                  <div className="flex items-center gap-2 text-xs flex-wrap">
+                    <Chip size="sm" color="primary" variant="flat" className="h-6 text-xs font-medium">
                       Treino: {effectiveTrainCount} amostras
                     </Chip>
-                    <Chip size="sm" color="secondary" variant="flat" className="h-5 text-[11px]">
+                    <Chip size="sm" color="secondary" variant="flat" className="h-6 text-xs font-medium">
                       Teste: {totalTestSamples} amostras {isSeparateTestFile ? "(Dedicado)" : "(Divisão)"}
                     </Chip>
                   </div>

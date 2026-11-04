@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Card, CardBody, CardHeader, Divider, Input, Button, Chip, Tooltip } from "@heroui/react";
-import { Sliders, Cpu, Info, Plus, Minus, Layers, ChevronDown, ChevronUp, Lightbulb } from "lucide-react";
+import { Cpu, Info, Plus, Minus, ChevronDown, ChevronUp, Lightbulb } from "lucide-react";
 import { MlpParameters } from "../../types/mlp";
 
 export interface TopologyPanelProps {
@@ -201,8 +201,8 @@ const NetworkDiagram: React.FC<{
 export const TopologyPanel: React.FC<TopologyPanelProps> = ({
   parameters,
   onChange,
-  datasetInputCount,
-  datasetOutputCount,
+  datasetInputCount: _datasetInputCount,
+  datasetOutputCount: _datasetOutputCount,
 }) => {
   const { inputLayer, hiddenLayer, outputLayer, firstClassColumn } = parameters;
   const [showAdvanced, setShowAdvanced] = useState(false);
@@ -245,45 +245,34 @@ export const TopologyPanel: React.FC<TopologyPanelProps> = ({
         {/* Neurons Controls Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           {/* Input Neurons (Read-only / Synced with Dataset) */}
-          <div className="p-3 rounded-xl bg-sky-50/40 dark:bg-sky-950/20 border border-sky-200/50 dark:border-sky-900/30 space-y-1.5">
+          <div className="p-3.5 rounded-2xl bg-sky-50/50 dark:bg-sky-950/20 border border-sky-200/60 dark:border-sky-900/40 flex flex-col justify-between space-y-2">
             <div className="flex items-center justify-between">
-              <label className="text-xs font-semibold text-sky-900 dark:text-sky-200">
+              <span className="text-xs font-bold text-sky-900 dark:text-sky-200">
                 Entradas
-              </label>
-              {typeof datasetInputCount === "number" && (
-                <Chip size="sm" color="primary" variant="flat" className="h-4 text-[9px] px-1">
-                  Auto
-                </Chip>
-              )}
+              </span>
+              <Chip size="sm" color="primary" variant="flat" className="h-5 text-[10px] px-1.5 font-semibold">
+                Auto ({inputLayer})
+              </Chip>
             </div>
-            <Input
-              type="number"
-              size="sm"
-              min={1}
-              value={inputLayer.toString()}
-              onChange={(e) => {
-                const val = parseInt(e.target.value, 10);
-                if (!Number.isNaN(val) && val >= 1) {
-                  onChange({ inputLayer: val, firstClassColumn: val });
-                }
-              }}
-              startContent={<Layers className="h-3.5 w-3.5 text-sky-500" />}
-              className="font-bold"
-            />
-            <span className="text-[10px] text-default-500 block">Atributos de entrada</span>
+            <div className="flex items-center justify-center h-10 rounded-xl bg-white/80 dark:bg-sky-950/40 border border-sky-100 dark:border-sky-900/40">
+              <span className="font-mono font-extrabold text-xl text-sky-700 dark:text-sky-300">
+                {inputLayer}
+              </span>
+            </div>
+            <span className="text-[10px] text-default-500 text-center block">Atributos do dataset</span>
           </div>
 
           {/* Hidden Neurons (Interactive Stepper) */}
-          <div className="p-3 rounded-xl bg-purple-50/40 dark:bg-purple-950/20 border-2 border-purple-400/60 dark:border-purple-600/60 space-y-1.5">
+          <div className="p-3.5 rounded-2xl bg-purple-50/60 dark:bg-purple-950/25 border-2 border-purple-300 dark:border-purple-700/60 shadow-sm flex flex-col justify-between space-y-2">
             <div className="flex items-center justify-between">
-              <label className="text-xs font-bold text-purple-900 dark:text-purple-200">
+              <span className="text-xs font-bold text-purple-950 dark:text-purple-100">
                 Camada Oculta
-              </label>
-              <span className="text-[10px] font-mono font-semibold text-purple-600 dark:text-purple-400">
+              </span>
+              <span className="text-[10px] font-mono font-bold text-purple-700 dark:text-purple-300 uppercase">
                 Ajustável
               </span>
             </div>
-            <div className="flex items-center gap-1.5">
+            <div className="flex items-center gap-2 h-10 px-1 rounded-xl bg-white/80 dark:bg-purple-950/40 border border-purple-200 dark:border-purple-800/40">
               <Button
                 isIconOnly
                 size="sm"
@@ -296,20 +285,9 @@ export const TopologyPanel: React.FC<TopologyPanelProps> = ({
               >
                 <Minus className="h-3.5 w-3.5" />
               </Button>
-              <Input
-                type="number"
-                size="sm"
-                min={1}
-                max={64}
-                value={hiddenLayer.toString()}
-                onChange={(e) => {
-                  const val = parseInt(e.target.value, 10);
-                  if (!Number.isNaN(val) && val >= 1) {
-                    onChange({ hiddenLayer: val });
-                  }
-                }}
-                className="text-center font-bold"
-              />
+              <span className="flex-1 text-center font-mono font-extrabold text-xl text-purple-800 dark:text-purple-200">
+                {hiddenLayer}
+              </span>
               <Button
                 isIconOnly
                 size="sm"
@@ -323,36 +301,25 @@ export const TopologyPanel: React.FC<TopologyPanelProps> = ({
                 <Plus className="h-3.5 w-3.5" />
               </Button>
             </div>
-            <span className="text-[10px] text-default-500 block">Neurônios de processamento</span>
+            <span className="text-[10px] text-default-500 text-center block">Neurônios de processamento</span>
           </div>
 
           {/* Output Neurons (Read-only / Synced with Dataset) */}
-          <div className="p-3 rounded-xl bg-emerald-50/40 dark:bg-emerald-950/20 border border-emerald-200/50 dark:border-emerald-900/30 space-y-1.5">
+          <div className="p-3.5 rounded-2xl bg-emerald-50/50 dark:bg-emerald-950/20 border border-emerald-200/60 dark:border-emerald-900/40 flex flex-col justify-between space-y-2">
             <div className="flex items-center justify-between">
-              <label className="text-xs font-semibold text-emerald-900 dark:text-emerald-200">
+              <span className="text-xs font-bold text-emerald-900 dark:text-emerald-200">
                 Saídas
-              </label>
-              {typeof datasetOutputCount === "number" && (
-                <Chip size="sm" color="success" variant="flat" className="h-4 text-[9px] px-1">
-                  Auto
-                </Chip>
-              )}
+              </span>
+              <Chip size="sm" color="success" variant="flat" className="h-5 text-[10px] px-1.5 font-semibold">
+                Auto ({outputLayer})
+              </Chip>
             </div>
-            <Input
-              type="number"
-              size="sm"
-              min={1}
-              value={outputLayer.toString()}
-              onChange={(e) => {
-                const val = parseInt(e.target.value, 10);
-                if (!Number.isNaN(val) && val >= 1) {
-                  onChange({ outputLayer: val });
-                }
-              }}
-              startContent={<Sliders className="h-3.5 w-3.5 text-emerald-500" />}
-              className="font-bold"
-            />
-            <span className="text-[10px] text-default-500 block">Classes alvo de saída</span>
+            <div className="flex items-center justify-center h-10 rounded-xl bg-white/80 dark:bg-emerald-950/40 border border-emerald-100 dark:border-emerald-900/40">
+              <span className="font-mono font-extrabold text-xl text-emerald-700 dark:text-emerald-300">
+                {outputLayer}
+              </span>
+            </div>
+            <span className="text-[10px] text-default-500 text-center block">Classes One-Hot</span>
           </div>
         </div>
 
