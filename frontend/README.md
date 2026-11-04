@@ -17,14 +17,15 @@
 ## 📋 Sumário
 - [Visão Geral](#-visão-geral)
 - [Tecnologias Utilizadas](#-tecnologias-utilizadas)
-- [Estrutura da Aplicação (4 Estúdios)](#-estrutura-da-aplicação-4-estúdios)
+- [Estrutura da Aplicação (Wizard Stepper em 4 Passos)](#-estrutura-da-aplicação-wizard-stepper-em-4-passos)
   - [1. Datasets & Features](#1-datasets--features)
-  - [2. Estúdio de Hiperparâmetros](#2-estúdio-de-hiperparâmetros)
+  - [2. Hiperparâmetros & Topologia](#2-hiperparâmetros--topologia)
   - [3. Treinamento em Tempo Real (SignalR)](#3-treinamento-em-tempo-real-signalr)
   - [4. Avaliação & Matriz de Confusão](#4-avaliação--matriz-de-confusão)
 - [Arquitetura de Componentes e Serviços](#-arquitetura-de-componentes-e-serviços)
 - [Comunicação com o Backend](#-comunicação-com-o-backend)
 - [Como Executar Localmente](#-como-executar-localmente)
+- [Executando via Docker](#-executando-via-docker)
 - [Build de Produção e Otimização](#-build-de-produção-e-otimização)
 - [Links Relacionados](#-links-relacionados)
 
@@ -54,36 +55,42 @@ Em vez de dashboards estáticos convencionais, a aplicação opera como um **lab
 
 ---
 
-## 🏛️ Estrutura da Aplicação (4 Estúdios)
+## 🏛️ Estrutura da Aplicação (Wizard Stepper em 4 Passos)
+
+O frontend adota um fluxo guiado passo a passo (*Wizard Stepper*) pensado tanto para iniciantes quanto para especialistas explorarem o ciclo completo do aprendizado de máquina supervisionado:
 
 ```mermaid
 flowchart LR
-    TAB1["1. Datasets & Features"] --> TAB2["2. Hiperparâmetros"]
-    TAB2 --> TAB3["3. Treinamento Ao Vivo (WebSocket)"]
-    TAB3 --> TAB4["4. Avaliação & Matriz de Confusão"]
+    TAB1["Passo 1: Datasets & Features"] --> TAB2["Passo 2: Topologia & Parâmetros"]
+    TAB2 --> TAB3["Passo 3: Treinamento Ao Vivo (SignalR)"]
+    TAB3 --> TAB4["Passo 4: Avaliação & Métricas"]
 ```
 
 ### 1. Datasets & Features
-* **Datasets Benchmark Integrados:** Seleção em 1 clique do clássico **Iris Dataset** (150 registros, 3 espécies) e **ColorBalls Dataset** (400 registros, 4 classes).
-* **Upload Customizado de CSV:** Arraste e solte qualquer arquivo CSV para processamento em tempo real.
+* **Datasets Benchmark Integrados:** Seleção com 1 clique do clássico **Íris de Fisher** (150 amostras, 3 espécies) e **ColorBalls** (400 amostras, 4 classes).
+* **Particionamento Flexível:**
+  * **Arquivo Único com Split Automático:** Carregue um CSV único e ajuste a proporção de Treino/Teste via slider dinâmico (ex: 70% / 30%).
+  * **Arquivos Separados:** Envio explícito de dois arquivos CSV independentes (`treino.csv` e `teste.csv`).
 * **Seletor Interativo de Papéis:** Interface para classificar cada coluna do CSV como Entrada (*Input*), Alvo/Classe (*Target*) ou Ignorada (*Ignore*).
-* **Pipeline de Normalização:** Escalonamento Min-Max $[0.0, 1.0]$ automático com prevenção contra reordenação de chaves numéricas do motor JavaScript V8.
-* **Divisão Treino/Teste:** Slider dinâmico para particionar os dados (ex: 70% treino / 30% teste).
+* **Pipeline de Normalização:** Escalonamento Min-Max $[0.0, 1.0]$ automático com ordenação estável de features.
 
-### 2. Estúdio de Hiperparâmetros
-* **Topologia Visual:** Configuração de neurônios de entrada, neurônios ocultos e neurônios de saída com diagrama de camadas animado.
+### 2. Hiperparâmetros & Topologia
+* **Diagrama Interativo de Topologia (SVG Dinâmico):** Desenho em tempo real das camadas de neurônios e conexões sinápticas.
+* **Auto-Sincronização de Neurônios:** As camadas de Entrada e Saída são sincronizadas automaticamente com as features selecionadas no dataset.
+* **Controle de Camada Oculta:** Ajuste intuitivo com botões incrementais `-` e `+`.
 * **Funções de Ativação (*Strategy Pattern*):**
   * **Logística (Sigmoide):** Ideal para probabilidades e saídas entre 0 e 1.
   * **Tangente Hiperbólica (Tanh):** Escala de -1 a 1 com convergência rápida em dados centralizados.
   * **Linear:** Para análise de comportamento sem saturação.
-* **Parâmetros de Aprendizado:** Taxa de aprendizado ($\eta$), limite de erro aceitável ($E_{min}$) e limite máximo de épocas.
+* **Parâmetros de Aprendizado:** Taxa de aprendizado ($\eta$), limite de erro aceitável ($E_{min}$) e limite máximo de épocas com controles deslizantes e badges numéricos.
+* **Guia Didático Interativo:** Modal educativo integrado ("*O que é uma Rede MLP?*") explicando Forward Pass, Backpropagation e escolha de hiperparâmetros.
 
 ### 3. Treinamento em Tempo Real (SignalR)
-* **WebSocket Bi-direcional:** Conexão mantida com `/hubs/training` com identificador de sessão exclusivo (`sessionId`).
-* **Curva de Aprendizado Dinâmica:** Gráfico Canvas desenhado a **60 FPS** com buffer circular e suporte a dezenas de milhares de épocas sem congelar o navegador.
-* **Linha de Limiar de Erro:** Visualização clara da meta de erro mínimo ($E_{min}$) no gráfico.
-* **Telemetria ao Vivo:** Contador de épocas atual, cronômetro em tempo real, velocidade de redução do erro e barra de progresso.
-* **Controles:** Ações imediatas de *Iniciar Treinamento*, *Pausar/Interromper* e *Resetar*.
+* **WebSocket Bi-direcional:** Conexão contínua com `/hubs/training` com identificador de sessão exclusivo (`sessionId`).
+* **Curva de Aprendizado Dinâmica:** Gráfico Canvas desenhado a **60 FPS** com buffer circular e suporte a dezenas de milhares de épocas sem travamento de tela.
+* **Linha de Limiar de Erro:** Visualização clara da meta de erro mínimo ($E_{min}$) sobre o gráfico.
+* **Telemetria ao Vivo:** Contador de épocas atual, cronômetro em tempo real, taxa de erro atual e barra de progresso.
+* **Controles de Execução:** Ações imediatas de *Iniciar Treinamento*, *Pausar/Interromper* e *Resetar*.
 
 ### 4. Avaliação & Matriz de Confusão
 * **Matriz de Confusão em Heatmap:** Mapa de calor interativo onde a intensidade das cores reflete a concentração das previsões (verde na diagonal para acertos, vermelho fora da diagonal para erros).
@@ -137,6 +144,18 @@ npm run dev
 ```
 
 Acesse no navegador: **`http://localhost:3000`**
+
+---
+
+## 🐳 Executando via Docker
+
+Para rodar todo o ecossistema (Frontend em Nginx + Backend em ASP.NET Core) sem precisar de Node ou .NET na máquina host:
+
+```bash
+docker compose up --build
+```
+
+O Frontend estará acessível em `http://localhost:3000` com *reverse proxy* nativo configurado no Nginx para encaminhar `/api/` e os WebSockets do SignalR (`/hubs/`) para o backend em `http://localhost:5134`.
 
 ---
 

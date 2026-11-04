@@ -36,7 +36,7 @@ O grande diferencial é o suporte nativo a **comunicação bidirecional contínu
 * **Clean Architecture Estrita:** Separação rígida de responsabilidades entre Domínio, Aplicação e Infraestrutura/Apresentação.
 * **Padrões de Projeto (SOLID):** Uso de *Strategy Pattern* e *Factory Pattern* para desacoplamento de funções matemáticas de ativação e *Dependency Inversion Principle (DIP)* para o notificador em tempo real.
 * **Streaming por Época com SignalR:** Sem polling e sem bloqueio de I/O — atualizações assíncronas enviadas instantaneamente ao frontend.
-* **100% Testado:** Suíte de testes unitários com **xUnit**, cobrindo convergência matemática, limites de funções e serialização.
+* **100% Testado:** Suíte com **16 testes unitários automatizados** com **xUnit**, cobrindo convergência matemática, limites de funções, matriz de confusão e serialização.
 
 ---
 
@@ -77,7 +77,7 @@ flowchart TD
 | **Application** | `Mlp.Application` | Orquestra os casos de uso. Contém o serviço `MlpService`, os DTOs de entrada e saída (`RunPerceptronRequest`, `RunPerceptronResponse`) e a abstração `ITrainingNotifier`. |
 | **Infrastructure** | `Mlp.Infrastructure` | Lida com detalhes de baixo nível e fontes de dados externas (parsers de arquivos e datasets). |
 | **Api** | `Mlp.Api` | A porta de entrada HTTP e WebSocket. Contém `MlpController`, o `TrainingHub` (SignalR), o `SignalRTrainingNotifier` e a configuração de injeção de dependência e CORS. |
-| **Tests** | `Mlp.Domain.Tests` | Testes unitários automatizados com xUnit para validar o comportamento matemático e a integridade dos serviços. |
+| **Tests** | `Mlp.Domain.Tests` | 16 testes unitários automatizados com xUnit para validar o comportamento matemático, convergência e métricas de avaliação. |
 
 ---
 
@@ -88,7 +88,7 @@ A comunicação entre o cliente (navegador) e o servidor ocorre de forma híbrid
 ```mermaid
 sequenceDiagram
     autonumber
-    actor User as Usuário / Frontend (Next.js)
+    actor User as Usuário / Frontend (React + Vite)
     participant Hub as TrainingHub (SignalR WebSocket)
     participant API as MlpController (HTTP POST)
     participant Service as MlpService (Application)
