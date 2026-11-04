@@ -41,9 +41,9 @@ export const SplitSlider: React.FC<SplitSliderProps> = ({
   };
 
   return (
-    <Card className="border border-default-200/50 bg-content1/60 backdrop-blur-md shadow-sm">
+    <Card className="border border-purple-100/80 dark:border-purple-950/40 bg-white/80 dark:bg-content1/60 backdrop-blur-md shadow-sm rounded-2xl">
       <CardHeader className="flex gap-3 pb-2">
-        <div className="p-2 rounded-lg bg-success/10 text-success">
+        <div className="p-2 rounded-xl bg-purple-500/10 text-purple-600 dark:text-purple-400">
           <SplitSquareVertical className="h-5 w-5" />
         </div>
         <div>
@@ -56,7 +56,7 @@ export const SplitSlider: React.FC<SplitSliderProps> = ({
       <Divider />
       <CardBody className="p-4 sm:p-5 space-y-6">
         {/* Dynamic Samples Breakdown Chips */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-4 rounded-2xl bg-content2/40 border border-default-200/50">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-4 rounded-xl bg-purple-50/40 dark:bg-purple-950/20 border border-purple-100/80 dark:border-purple-900/40">
           <div className="space-y-1">
             <span className="text-xs font-semibold uppercase tracking-wider text-default-500">
               Distribuição de Amostras

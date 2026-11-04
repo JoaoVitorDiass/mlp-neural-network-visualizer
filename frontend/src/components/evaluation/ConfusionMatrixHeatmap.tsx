@@ -1,7 +1,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { Card, CardBody, Chip, Tooltip } from "@heroui/react";
-import { CheckCircle2, AlertTriangle, HelpCircle } from "lucide-react";
+import { CheckCircle2, AlertTriangle, HelpCircle, Lightbulb } from "lucide-react";
 
 interface ConfusionMatrixHeatmapProps {
   matrix: number[][];
@@ -69,8 +69,21 @@ export const ConfusionMatrixHeatmap: React.FC<ConfusionMatrixHeatmapProps> = ({
 
   return (
     <div className="space-y-6">
+      {/* Educational Callout */}
+      <div className="flex items-start gap-2.5 p-3.5 rounded-2xl bg-emerald-50/80 dark:bg-emerald-950/30 border border-emerald-200/60 dark:border-emerald-900/40 text-xs sm:text-sm text-emerald-900 dark:text-emerald-200 shadow-sm">
+        <Lightbulb className="h-5 w-5 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
+        <div className="space-y-0.5">
+          <p className="font-semibold text-emerald-950 dark:text-emerald-100">
+            Passo 4: Avaliação do Modelo e Matriz de Confusão
+          </p>
+          <p className="text-emerald-800/80 dark:text-emerald-300/80 text-xs leading-relaxed">
+            A matriz de confusão cruza os valores reais do dataset com as predições geradas pela MLP. Os blocos em verde na <strong>diagonal principal</strong> são os acertos exatos. Células fora da diagonal em tons avermelhados indicam erros onde o modelo se confundiu.
+          </p>
+        </div>
+      </div>
+
       {/* Matrix Card */}
-      <Card className="border border-default-200/50 bg-content1/60 backdrop-blur-md shadow-sm">
+      <Card className="border border-emerald-100/80 dark:border-emerald-950/40 bg-white/80 dark:bg-content1/60 backdrop-blur-md shadow-sm rounded-2xl">
         <CardBody className="p-6 space-y-6">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
@@ -78,7 +91,7 @@ export const ConfusionMatrixHeatmap: React.FC<ConfusionMatrixHeatmapProps> = ({
                 <h3 className="text-base font-bold text-foreground">
                   Matriz de Confusão (Heatmap)
                 </h3>
-                <Tooltip content="Mostra a relação entre as classes reais (linhas) e as predições da rede (colunas). A diagonal principal representa os acertos.">
+                <Tooltip content="Linhas = classes reais. Colunas = classes previstas. A diagonal principal representa os acertos.">
                   <HelpCircle className="h-4 w-4 text-default-400 cursor-pointer" />
                 </Tooltip>
               </div>
@@ -89,7 +102,7 @@ export const ConfusionMatrixHeatmap: React.FC<ConfusionMatrixHeatmapProps> = ({
 
             <div className="flex items-center gap-2">
               <Chip size="sm" variant="flat" color="success" startContent={<CheckCircle2 className="h-3.5 w-3.5" />}>
-                {correctCount} Acertos
+                {correctCount} Acertos ({((correctCount / (totalCount || 1)) * 100).toFixed(1)}%)
               </Chip>
               {totalCount - correctCount > 0 && (
                 <Chip size="sm" variant="flat" color="danger" startContent={<AlertTriangle className="h-3.5 w-3.5" />}>
@@ -127,7 +140,7 @@ export const ConfusionMatrixHeatmap: React.FC<ConfusionMatrixHeatmapProps> = ({
                     <tr key={rIndex} className="border-t border-default-200/40">
                       {/* Row Header */}
                       <td
-                        className="p-3 text-xs font-medium text-default-700 dark:text-default-300 text-left whitespace-nowrap pr-4"
+                        className="p-3 text-xs font-semibold text-default-700 dark:text-default-300 text-left whitespace-nowrap pr-4"
                         title={rowName}
                       >
                         {rowName}
@@ -136,25 +149,19 @@ export const ConfusionMatrixHeatmap: React.FC<ConfusionMatrixHeatmapProps> = ({
                       {/* Matrix Cells */}
                       {matrix[rIndex].map((val, cIndex) => {
                         const isDiagonal = rIndex === cIndex;
-                        const intensity = Math.max(0.15, Math.min(1, val / maxCell));
 
-                        let bgStyle = "";
-                        let textStyle = "text-foreground font-semibold";
-                        let customStyle: React.CSSProperties = {};
-
+                        let cellClass = "";
                         if (isDiagonal) {
                           if (val === 0) {
-                            bgStyle = "bg-default-100/40";
+                            cellClass = "bg-default-50 dark:bg-default-100/20 text-default-400";
                           } else {
-                            bgStyle = "text-success-700 dark:text-success-300 font-bold";
-                            customStyle = { backgroundColor: `rgba(22, 163, 74, ${intensity * 0.45})` };
+                            cellClass = "bg-emerald-100/80 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-200 border-emerald-300 dark:border-emerald-800 font-bold";
                           }
                         } else {
                           if (val > 0) {
-                            bgStyle = "text-danger-700 dark:text-danger-300 font-semibold";
-                            customStyle = { backgroundColor: `rgba(239, 68, 68, ${intensity * 0.4})` };
+                            cellClass = "bg-rose-100/80 text-rose-800 dark:bg-rose-950/50 dark:text-rose-200 border-rose-300 dark:border-rose-900/50 font-semibold";
                           } else {
-                            bgStyle = "bg-default-100/20 text-default-400";
+                            cellClass = "bg-default-50/50 dark:bg-default-100/10 text-default-400";
                           }
                         }
 
@@ -176,8 +183,7 @@ export const ConfusionMatrixHeatmap: React.FC<ConfusionMatrixHeatmapProps> = ({
                                 initial={{ scale: 0.9, opacity: 0 }}
                                 animate={{ scale: 1, opacity: 1 }}
                                 transition={{ duration: 0.2, delay: (rIndex * numClasses + cIndex) * 0.02 }}
-                                style={customStyle}
-                                className={`rounded-xl py-3 px-2 transition-transform hover:scale-105 cursor-pointer shadow-sm border border-default-200/30 ${bgStyle} ${textStyle}`}
+                                className={`rounded-xl py-3 px-2 transition-transform hover:scale-105 cursor-pointer shadow-sm border ${cellClass}`}
                               >
                                 <span className="text-sm font-mono">{val}</span>
                               </motion.div>
@@ -203,7 +209,7 @@ export const ConfusionMatrixHeatmap: React.FC<ConfusionMatrixHeatmapProps> = ({
                         {colTotal}
                       </td>
                     ))}
-                    <td className="p-3 text-xs font-mono font-bold text-primary border-l border-default-200/50">
+                    <td className="p-3 text-xs font-mono font-bold text-emerald-600 dark:text-emerald-400 border-l border-default-200/50">
                       {totalCount}
                     </td>
                   </tr>
@@ -215,7 +221,7 @@ export const ConfusionMatrixHeatmap: React.FC<ConfusionMatrixHeatmapProps> = ({
       </Card>
 
       {/* Per-Class Detailed Metrics Table */}
-      <Card className="border border-default-200/50 bg-content1/60 backdrop-blur-md shadow-sm">
+      <Card className="border border-emerald-100/80 dark:border-emerald-950/40 bg-white/80 dark:bg-content1/60 backdrop-blur-md shadow-sm rounded-2xl">
         <CardBody className="p-6 space-y-4">
           <h4 className="text-sm font-bold text-foreground">
             Métricas Detalhadas por Classe (Precisão, Recall e F1-Score)
@@ -238,13 +244,13 @@ export const ConfusionMatrixHeatmap: React.FC<ConfusionMatrixHeatmapProps> = ({
                   <tr key={idx} className="hover:bg-default-50/50 dark:hover:bg-default-100/10 transition-colors">
                     <td className="py-3 px-3 font-medium text-foreground">{cm.name}</td>
                     <td className="py-3 px-3 font-mono text-default-500">{cm.actualTotal}</td>
-                    <td className="py-3 px-3 font-mono text-success font-semibold">{cm.tp}</td>
+                    <td className="py-3 px-3 font-mono text-emerald-600 dark:text-emerald-400 font-semibold">{cm.tp}</td>
                     <td className="py-3 px-3">
                       <div className="flex items-center gap-2">
                         <span className="font-mono font-medium">{cm.precision.toFixed(1)}%</span>
                         <div className="w-16 h-1.5 bg-default-100 rounded-full overflow-hidden">
                           <div
-                            className="h-full bg-primary rounded-full"
+                            className="h-full bg-emerald-500 rounded-full"
                             style={{ width: `${Math.min(100, cm.precision)}%` }}
                           />
                         </div>
@@ -255,16 +261,22 @@ export const ConfusionMatrixHeatmap: React.FC<ConfusionMatrixHeatmapProps> = ({
                         <span className="font-mono font-medium">{cm.recall.toFixed(1)}%</span>
                         <div className="w-16 h-1.5 bg-default-100 rounded-full overflow-hidden">
                           <div
-                            className="h-full bg-secondary rounded-full"
+                            className="h-full bg-sky-500 rounded-full"
                             style={{ width: `${Math.min(100, cm.recall)}%` }}
                           />
                         </div>
                       </div>
                     </td>
                     <td className="py-3 px-3">
-                      <span className="font-mono font-bold text-foreground">
-                        {cm.f1.toFixed(1)}%
-                      </span>
+                      <div className="flex items-center gap-2">
+                        <span className="font-mono font-medium">{cm.f1.toFixed(1)}%</span>
+                        <div className="w-16 h-1.5 bg-default-100 rounded-full overflow-hidden">
+                          <div
+                            className="h-full bg-purple-500 rounded-full"
+                            style={{ width: `${Math.min(100, cm.f1)}%` }}
+                          />
+                        </div>
+                      </div>
                     </td>
                   </tr>
                 ))}

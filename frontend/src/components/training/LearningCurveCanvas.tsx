@@ -261,15 +261,15 @@ export const LearningCurveCanvas: React.FC<LearningCurveCanvasProps> = ({
       : null;
 
   return (
-    <Card className="border border-default-200/50 bg-content1/60 backdrop-blur-md shadow-sm">
+    <Card className="border border-amber-200/80 dark:border-amber-950/40 bg-white/80 dark:bg-content1/70 backdrop-blur-md shadow-sm rounded-2xl">
       <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-2">
         <div className="flex items-center gap-3">
-          <div className="p-2.5 rounded-xl bg-primary/10 text-primary">
+          <div className="p-2.5 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400">
             <LineChart className="h-5 w-5" />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h3 className="text-base font-semibold tracking-tight">Curva de Aprendizado</h3>
+              <h3 className="text-base font-semibold tracking-tight">Curva de Aprendizado (Loss Curve)</h3>
               {isTraining && (
                 <span className="flex h-2 w-2 relative">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
@@ -278,7 +278,7 @@ export const LearningCurveCanvas: React.FC<LearningCurveCanvasProps> = ({
               )}
             </div>
             <p className="text-xs text-default-500">
-              Taxa de erro médio por época em tempo real
+              Taxa de erro quadrático médio (MSE) por época transmitida a 60 FPS
             </p>
           </div>
         </div>

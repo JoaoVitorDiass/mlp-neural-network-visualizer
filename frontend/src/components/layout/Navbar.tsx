@@ -6,17 +6,26 @@ import {
   NavbarItem,
   Chip,
   Tooltip,
+  Button,
 } from "@heroui/react";
-import { Network, RefreshCw } from "lucide-react";
+import { Network, RefreshCw, BookOpen } from "lucide-react";
 import { ThemeToggle } from "../common/ThemeToggle";
 import { HealthResponse } from "../../types/mlp";
 
 interface NavbarProps {
   theme: "dark" | "light";
   onToggleTheme: () => void;
+  onOpenGuideModal?: () => void;
+  onOpenGuide?: () => void;
 }
 
-export const Navbar: React.FC<NavbarProps> = ({ theme, onToggleTheme }) => {
+export const Navbar: React.FC<NavbarProps> = ({
+  theme,
+  onToggleTheme,
+  onOpenGuideModal,
+  onOpenGuide,
+}) => {
+  const handleOpenGuide = onOpenGuideModal || onOpenGuide;
   const [health, setHealth] = useState<HealthResponse | null>(null);
   const [isChecking, setIsChecking] = useState<boolean>(false);
   const [isOnline, setIsOnline] = useState<boolean | null>(null);
@@ -52,23 +61,50 @@ export const Navbar: React.FC<NavbarProps> = ({ theme, onToggleTheme }) => {
     <HeroNavbar
       maxWidth="xl"
       isBordered
-      className="bg-background/70 backdrop-blur-md border-b border-default-200/50 sticky top-0 z-50"
+      className="bg-white/80 dark:bg-background/80 backdrop-blur-md border-b border-slate-200/80 dark:border-default-200/50 sticky top-0 z-40"
     >
       <NavbarBrand className="gap-3">
-        <div className="p-2 rounded-xl bg-gradient-to-tr from-indigo-500 to-purple-500 text-white shadow-md shadow-indigo-500/20">
+        <div className="p-2.5 rounded-2xl bg-gradient-to-tr from-blue-500 via-indigo-500 to-purple-600 text-white shadow-md shadow-indigo-500/20">
           <Network className="h-5 w-5" />
         </div>
         <div className="flex flex-col">
-          <p className="font-bold text-inherit text-base tracking-tight leading-snug">
-            MLP Visualizer
-          </p>
-          <p className="text-xs text-default-500 font-mono">
-            Rede Neural Artificial
-          </p>
+          <div className="flex items-center gap-2">
+            <span className="font-extrabold text-inherit text-base tracking-tight leading-snug">
+              MLP Visualizer
+            </span>
+            <Chip
+              size="sm"
+              variant="flat"
+              color="primary"
+              className="text-[10px] h-4 px-1 font-mono hidden sm:inline-flex"
+            >
+              Edu v1.0
+            </Chip>
+          </div>
+          <span className="text-xs text-default-500 font-medium">
+            Estúdio Didático de Rede Neural
+          </span>
         </div>
       </NavbarBrand>
 
-      <NavbarContent justify="end" className="gap-3">
+      <NavbarContent justify="end" className="gap-2.5">
+        {/* Educational Guide Button */}
+        {handleOpenGuide && (
+          <NavbarItem>
+            <Button
+              size="sm"
+              variant="flat"
+              color="primary"
+              startContent={<BookOpen className="h-4 w-4 text-primary" />}
+              onClick={handleOpenGuide}
+              className="font-semibold text-xs rounded-xl bg-blue-50 text-blue-700 hover:bg-blue-100 dark:bg-blue-950/40 dark:text-blue-300 dark:hover:bg-blue-950/60"
+            >
+              <span className="hidden sm:inline">💡 O que é MLP? (Guia)</span>
+              <span className="sm:hidden">Guia MLP</span>
+            </Button>
+          </NavbarItem>
+        )}
+
         {/* Backend Status Badge */}
         <NavbarItem>
           <Tooltip
@@ -91,6 +127,7 @@ export const Navbar: React.FC<NavbarProps> = ({ theme, onToggleTheme }) => {
                   startContent={
                     <RefreshCw className="h-3 w-3 animate-spin text-default-500 ml-1" />
                   }
+                  className="rounded-xl text-xs"
                 >
                   Verificando...
                 </Chip>
@@ -105,9 +142,9 @@ export const Navbar: React.FC<NavbarProps> = ({ theme, onToggleTheme }) => {
                       <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
                     </span>
                   }
-                  className="font-medium text-xs text-emerald-600 dark:text-emerald-400"
+                  className="font-medium text-xs text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 rounded-xl"
                 >
-                  API Conectada
+                  API Online
                 </Chip>
               ) : (
                 <Chip
@@ -119,9 +156,9 @@ export const Navbar: React.FC<NavbarProps> = ({ theme, onToggleTheme }) => {
                       <span className="relative inline-flex rounded-full h-2 w-2 bg-rose-500"></span>
                     </span>
                   }
-                  className="font-medium text-xs text-rose-600 dark:text-rose-400"
+                  className="font-medium text-xs text-rose-700 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/40 rounded-xl"
                 >
-                  {isChecking ? "Reverificando..." : "API Desconectada"}
+                  {isChecking ? "Reverificando..." : "API Offline"}
                 </Chip>
               )}
             </div>

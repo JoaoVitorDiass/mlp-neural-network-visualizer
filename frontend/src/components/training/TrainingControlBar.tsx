@@ -75,11 +75,14 @@ export const TrainingControlBar: React.FC<TrainingControlBarProps> = ({
     connectionState === HubConnectionState.Reconnecting;
 
   return (
-    <Card className="border border-default-200/50 bg-content1/80 backdrop-blur-md shadow-md">
+    <Card className="border border-amber-200/80 dark:border-amber-950/40 bg-white/80 dark:bg-content1/70 backdrop-blur-md shadow-sm rounded-2xl">
       <CardBody className="p-4 sm:p-5 flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4">
         {/* Left Column: Title, SignalR Pill, and Status */}
         <div className="flex flex-wrap items-center gap-3">
           <div className="flex items-center gap-2">
+            <div className="p-2 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400">
+              <Play className="h-5 w-5 fill-current" />
+            </div>
             <h2 className="text-base sm:text-lg font-bold tracking-tight text-foreground">
               Estúdio de Treinamento
             </h2>

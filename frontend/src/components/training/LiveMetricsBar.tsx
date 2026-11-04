@@ -74,10 +74,10 @@ export const LiveMetricsBar: React.FC<LiveMetricsBarProps> = ({
       {/* 4 Responsive KPI Metric Tiles */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Tile 1: Epochs */}
-        <Card className="border border-default-200/50 bg-content1/60 backdrop-blur-md shadow-sm">
+        <Card className="border border-sky-200/80 dark:border-sky-900/40 bg-sky-50/60 dark:bg-sky-950/20 backdrop-blur-md shadow-sm rounded-2xl">
           <CardBody className="p-4 flex items-center justify-between">
             <div className="space-y-1">
-              <span className="text-xs font-medium text-default-500 uppercase tracking-wider">
+              <span className="text-xs font-semibold text-sky-800 dark:text-sky-300 uppercase tracking-wider">
                 Épocas
               </span>
               <div className="flex items-baseline gap-1.5">
@@ -92,17 +92,17 @@ export const LiveMetricsBar: React.FC<LiveMetricsBarProps> = ({
                 {metrics.progressPercentage.toFixed(1)}% concluído
               </p>
             </div>
-            <div className="p-3 rounded-2xl bg-primary/10 text-primary">
+            <div className="p-3 rounded-2xl bg-sky-500/15 text-sky-600 dark:text-sky-400">
               <Layers className="h-6 w-6" />
             </div>
           </CardBody>
         </Card>
 
         {/* Tile 2: Current Average Error */}
-        <Card className="border border-default-200/50 bg-content1/60 backdrop-blur-md shadow-sm">
+        <Card className="border border-amber-200/80 dark:border-amber-900/40 bg-amber-50/60 dark:bg-amber-950/20 backdrop-blur-md shadow-sm rounded-2xl">
           <CardBody className="p-4 flex items-center justify-between">
             <div className="space-y-1">
-              <span className="text-xs font-medium text-default-500 uppercase tracking-wider">
+              <span className="text-xs font-semibold text-amber-800 dark:text-amber-300 uppercase tracking-wider">
                 Erro Médio
               </span>
               <div className="text-2xl font-bold font-mono tracking-tight text-foreground">
@@ -115,8 +115,8 @@ export const LiveMetricsBar: React.FC<LiveMetricsBarProps> = ({
             <div
               className={`p-3 rounded-2xl ${
                 isConverged
-                  ? "bg-success/10 text-success"
-                  : "bg-warning/10 text-warning"
+                  ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400"
+                  : "bg-amber-500/15 text-amber-600 dark:text-amber-400"
               }`}
             >
               <Target className="h-6 w-6" />
@@ -125,17 +125,17 @@ export const LiveMetricsBar: React.FC<LiveMetricsBarProps> = ({
         </Card>
 
         {/* Tile 3: Error Reduction */}
-        <Card className="border border-default-200/50 bg-content1/60 backdrop-blur-md shadow-sm">
+        <Card className="border border-emerald-200/80 dark:border-emerald-900/40 bg-emerald-50/60 dark:bg-emerald-950/20 backdrop-blur-md shadow-sm rounded-2xl">
           <CardBody className="p-4 flex items-center justify-between">
             <div className="space-y-1">
-              <span className="text-xs font-medium text-default-500 uppercase tracking-wider">
+              <span className="text-xs font-semibold text-emerald-800 dark:text-emerald-300 uppercase tracking-wider">
                 Redução de Erro
               </span>
               <div className="flex items-baseline gap-1.5">
                 <span
                   className={`text-2xl font-bold font-mono tracking-tight ${
                     metrics.errorReductionPercentage > 0
-                      ? "text-success"
+                      ? "text-emerald-600 dark:text-emerald-400"
                       : "text-foreground"
                   }`}
                 >
@@ -153,7 +153,7 @@ export const LiveMetricsBar: React.FC<LiveMetricsBarProps> = ({
             <div
               className={`p-3 rounded-2xl ${
                 metrics.errorReductionPercentage > 0
-                  ? "bg-success/10 text-success"
+                  ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400"
                   : "bg-default-100 text-default-400"
               }`}
             >
@@ -167,10 +167,10 @@ export const LiveMetricsBar: React.FC<LiveMetricsBarProps> = ({
         </Card>
 
         {/* Tile 4: Elapsed Timer */}
-        <Card className="border border-default-200/50 bg-content1/60 backdrop-blur-md shadow-sm">
+        <Card className="border border-purple-200/80 dark:border-purple-900/40 bg-purple-50/60 dark:bg-purple-950/20 backdrop-blur-md shadow-sm rounded-2xl">
           <CardBody className="p-4 flex items-center justify-between">
             <div className="space-y-1">
-              <span className="text-xs font-medium text-default-500 uppercase tracking-wider">
+              <span className="text-xs font-semibold text-purple-800 dark:text-purple-300 uppercase tracking-wider">
                 Tempo Decorrido
               </span>
               <div className="text-2xl font-bold font-mono tracking-tight text-foreground">
@@ -197,7 +197,7 @@ export const LiveMetricsBar: React.FC<LiveMetricsBarProps> = ({
                 )}
               </div>
             </div>
-            <div className="p-3 rounded-2xl bg-secondary/10 text-secondary">
+            <div className="p-3 rounded-2xl bg-purple-500/15 text-purple-600 dark:text-purple-400">
               <Clock className="h-6 w-6" />
             </div>
           </CardBody>
@@ -205,7 +205,7 @@ export const LiveMetricsBar: React.FC<LiveMetricsBarProps> = ({
       </div>
 
       {/* Animated HeroUI Progress Bar */}
-      <Card className="border border-default-200/50 bg-content1/60 backdrop-blur-md shadow-sm p-4">
+      <Card className="border border-amber-100/80 dark:border-default-200/40 bg-white/80 dark:bg-content1/60 backdrop-blur-md shadow-sm p-4 rounded-2xl">
         <div className="space-y-2">
           <div className="flex items-center justify-between text-xs font-medium">
             <div className="flex items-center gap-2">

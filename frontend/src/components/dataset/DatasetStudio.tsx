@@ -100,53 +100,109 @@ export const DatasetStudio: React.FC<DatasetStudioProps> = ({
 
   return (
     <div className="space-y-6">
+      {/* Educational Step Callout */}
+      <div className="flex items-center gap-3 p-4 rounded-2xl bg-sky-50/90 dark:bg-sky-950/30 border border-sky-200/80 dark:border-sky-900/50 text-sky-950 dark:text-sky-200 shadow-sm">
+        <div className="p-2 rounded-xl bg-sky-500/15 text-sky-600 dark:text-sky-400 shrink-0">
+          <Sparkles className="h-5 w-5" />
+        </div>
+        <div className="text-xs sm:text-sm space-y-0.5">
+          <p className="font-semibold text-sky-900 dark:text-sky-100">
+            Passo 1: Carregue os Dados para o Treinamento da Rede
+          </p>
+          <p className="text-sky-800/80 dark:text-sky-300/80 text-xs">
+            A rede neural precisa de dados rotulados para aprender. Escolha um dos benchmarks acadêmicos recomendados com 1 clique ou envie seus arquivos CSV.
+          </p>
+        </div>
+      </div>
+
       {/* Top Controls: Preset Selection vs Custom Upload */}
-      <Card className="border border-default-200/50 bg-content1/60 backdrop-blur-md shadow-sm">
-        <CardBody className="p-4 sm:p-6">
+      <Card className="border border-sky-100/80 dark:border-default-200/40 bg-white/80 dark:bg-content1/60 backdrop-blur-md shadow-sm rounded-2xl">
+        <CardBody className="p-5 sm:p-6 space-y-4">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div className="space-y-1">
               <div className="flex items-center gap-2">
-                <Database className="h-5 w-5 text-primary" />
-                <h2 className="text-lg font-bold text-foreground">Selecione um Dataset Padrão ou Envie o Seu</h2>
+                <Database className="h-5 w-5 text-sky-600 dark:text-sky-400" />
+                <h2 className="text-base sm:text-lg font-bold text-foreground">
+                  Escolha um Dataset Pré-configurado ou Envie o Seu
+                </h2>
               </div>
               <p className="text-xs text-default-500">
-                Escolha benchmarks clássicos para treino imediato com 1 clique ou faça upload do seu arquivo CSV.
+                Os benchmarks pré-configurados já vêm com colunas e hiperparâmetros ajustados para convergência imediata.
               </p>
             </div>
 
-            <div className="flex flex-wrap items-center gap-2">
-              {PRESETS.map((p) => {
-                const isSelected = activeMode === "preset" && currentPresetId === p.id;
-                return (
-                  <Button
-                    key={p.id}
-                    color={isSelected ? "primary" : "default"}
-                    variant={isSelected ? "solid" : "flat"}
-                    size="sm"
-                    onClick={() => {
-                      setActiveMode("preset");
-                      loadPreset(p.id);
-                    }}
-                    startContent={<Sparkles className="h-3.5 w-3.5" />}
-                    className="font-medium"
-                  >
-                    {p.name} ({p.sampleCount} {p.testSampleCount ? `+ ${p.testSampleCount} teste` : "amostras"})
-                  </Button>
-                );
-              })}
-
+            <div className="flex items-center gap-1.5 p-1 rounded-xl bg-default-100/70 border border-default-200/50 text-xs self-start md:self-auto">
               <Button
-                color={activeMode === "upload" ? "secondary" : "default"}
-                variant={activeMode === "upload" ? "solid" : "flat"}
                 size="sm"
+                variant={activeMode === "preset" ? "solid" : "light"}
+                color={activeMode === "preset" ? "primary" : "default"}
+                onClick={() => setActiveMode("preset")}
+                className="h-8 text-xs px-3 font-semibold rounded-lg"
+                startContent={<Sparkles className="h-3.5 w-3.5" />}
+              >
+                Datasets Padrão
+              </Button>
+              <Button
+                size="sm"
+                variant={activeMode === "upload" ? "solid" : "light"}
+                color={activeMode === "upload" ? "primary" : "default"}
                 onClick={() => setActiveMode("upload")}
+                className="h-8 text-xs px-3 font-semibold rounded-lg"
                 startContent={<UploadCloud className="h-3.5 w-3.5" />}
-                className="font-medium"
               >
                 Enviar CSV Próprio
               </Button>
             </div>
           </div>
+
+          {/* Preset Buttons Grid */}
+          {activeMode === "preset" && (
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
+              {PRESETS.map((p) => {
+                const isSelected = currentPresetId === p.id;
+                const isBenchmark = p.id === "base-benchmark";
+                return (
+                  <div
+                    key={p.id}
+                    onClick={() => {
+                      loadPreset(p.id);
+                    }}
+                    className={`cursor-pointer p-4 rounded-xl border transition-all text-left flex flex-col justify-between gap-2 select-none ${
+                      isSelected
+                        ? "border-sky-500 bg-sky-50/70 dark:bg-sky-950/40 shadow-sm ring-2 ring-sky-400/30"
+                        : "border-default-200/60 bg-content2/30 hover:border-sky-300 hover:bg-sky-50/30 dark:hover:bg-content2/50"
+                    }`}
+                  >
+                    <div className="flex items-start justify-between gap-2">
+                      <span className="font-bold text-sm text-foreground flex items-center gap-1.5">
+                        {p.name}
+                        {isBenchmark && (
+                          <Chip size="sm" color="warning" variant="flat" className="h-5 text-[10px]">
+                            Recomendado
+                          </Chip>
+                        )}
+                      </span>
+                      {isSelected && (
+                        <CheckCircle2 className="h-4 w-4 text-sky-600 dark:text-sky-400 shrink-0" />
+                      )}
+                    </div>
+                    <p className="text-[11px] text-default-500 line-clamp-2">
+                      {p.description}
+                    </p>
+                    <div className="flex items-center gap-2 pt-1 text-[11px] text-default-600 font-mono">
+                      <span>{p.sampleCount} treino</span>
+                      {p.testSampleCount && (
+                        <>
+                          <span>•</span>
+                          <span>{p.testSampleCount} teste</span>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </CardBody>
       </Card>
 
@@ -154,10 +210,10 @@ export const DatasetStudio: React.FC<DatasetStudioProps> = ({
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Left Column: Dropzone & Dataset Info */}
         <div className="lg:col-span-5 space-y-6">
-          <Card className="border border-default-200/50 bg-content1/60 backdrop-blur-md shadow-sm">
+          <Card className="border border-sky-100/80 dark:border-default-200/40 bg-white/80 dark:bg-content1/60 backdrop-blur-md shadow-sm rounded-2xl">
             <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-2">
               <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-primary/10 text-primary">
+                <div className="p-2 rounded-xl bg-sky-500/10 text-sky-600 dark:text-sky-400">
                   {activeMode === "upload" ? (
                     <UploadCloud className="h-5 w-5" />
                   ) : (
@@ -183,7 +239,7 @@ export const DatasetStudio: React.FC<DatasetStudioProps> = ({
                   variant={!isSeparateTestFile ? "solid" : "light"}
                   color={!isSeparateTestFile ? "primary" : "default"}
                   onClick={() => handleTogglePartitionMode(false)}
-                  className="h-7 text-[11px] px-2.5 font-medium"
+                  className="h-7 text-[11px] px-2.5 font-medium rounded-lg"
                   startContent={<SplitSquareVertical className="h-3 w-3" />}
                 >
                   Arquivo Único
@@ -193,7 +249,7 @@ export const DatasetStudio: React.FC<DatasetStudioProps> = ({
                   variant={isSeparateTestFile ? "solid" : "light"}
                   color={isSeparateTestFile ? "secondary" : "default"}
                   onClick={() => handleTogglePartitionMode(true)}
-                  className="h-7 text-[11px] px-2.5 font-medium"
+                  className="h-7 text-[11px] px-2.5 font-medium rounded-lg"
                   startContent={<Files className="h-3 w-3" />}
                 >
                   Arquivos Separados
@@ -344,9 +400,9 @@ export const DatasetStudio: React.FC<DatasetStudioProps> = ({
 
         {/* Right Column: Interactive Column Roles Configuration */}
         <div className="lg:col-span-7 space-y-6">
-          <Card className="border border-default-200/50 bg-content1/60 backdrop-blur-md shadow-sm">
+          <Card className="border border-sky-100/80 dark:border-default-200/40 bg-white/80 dark:bg-content1/60 backdrop-blur-md shadow-sm rounded-2xl">
             <CardHeader className="flex gap-3 pb-2">
-              <div className="p-2 rounded-lg bg-secondary/10 text-secondary">
+              <div className="p-2 rounded-xl bg-purple-500/10 text-purple-600 dark:text-purple-400">
                 <Binary className="h-5 w-5" />
               </div>
               <div>
@@ -365,10 +421,10 @@ export const DatasetStudio: React.FC<DatasetStudioProps> = ({
       </div>
 
       {/* Bottom Area: Data Preview Table (Raw vs Normalized) */}
-      <Card className="border border-default-200/50 bg-content1/60 backdrop-blur-md shadow-sm overflow-hidden">
+      <Card className="border border-sky-100/80 dark:border-default-200/40 bg-white/80 dark:bg-content1/60 backdrop-blur-md shadow-sm rounded-2xl overflow-hidden">
         <CardHeader className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3">
           <div className="flex items-center gap-2">
-            <div className="p-2 rounded-lg bg-primary/10 text-primary">
+            <div className="p-2 rounded-xl bg-sky-500/10 text-sky-600 dark:text-sky-400">
               <TableProperties className="h-4 w-4" />
             </div>
             <div>
